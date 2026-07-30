@@ -214,7 +214,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
             return
 
         case .inline(var buf):
-            let requiredForSlot = Int(bitPattern: slot) + 1
+            let requiredForSlot = Int(slot.underlying.rawValue + 1)
             let newCapacity = Index<E>.Count(UInt(Swift.max(requiredForSlot, inlineCapacity * 2)))
             var heap = Buffer.Slab(minimumCapacity: newCapacity)
 
