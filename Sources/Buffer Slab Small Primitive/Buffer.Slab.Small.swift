@@ -23,12 +23,13 @@ extension Buffer.Slab where S: ~Copyable {
         @usableFromInline
         internal var _storage: _Representation
 
-        // [PATTERN-052] left: `package init` is blocked because the parameter type
+        @inlinable
+        // swift-linter:disable:next inlinable internal access
+        // REASON: `package init` is blocked because the parameter type
         // `_Representation` is `@usableFromInline internal` (load-bearing per [MOD-036],
         // referenced from `@inlinable` cross-module ops). Widening `_Representation` to
         // `package` breaks those `@inlinable` case references; `@usableFromInline` is
         // rejected on an `@inlinable init`. `package` is insufficient — left per brief.
-        @inlinable
         internal init(_storage: consuming _Representation) {
             self._storage = _storage
         }
