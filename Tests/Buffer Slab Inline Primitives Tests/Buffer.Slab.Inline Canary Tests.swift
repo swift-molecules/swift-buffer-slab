@@ -112,7 +112,7 @@ struct `Buffer.Slab.Inline - Single-Free` {
         let n = 6
         do {
             var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab.Inline<8>()
-            for i in 0..<n {
+            (0..<n).forEach { i in
                 buffer.insert(Counted(i, ledger), at: Bit.Index.Bounded<8>(Bit.Index(Ordinal(UInt(i))))!)
             }
         }  // buffer (and its Box) drop here — Box.deinit walks the bitmap
