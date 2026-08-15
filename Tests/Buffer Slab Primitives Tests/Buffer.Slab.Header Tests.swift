@@ -11,7 +11,8 @@ struct `Buffer.Slab.Header` {
 
     @Test
     func `init creates empty bitmap`() {
-        let header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header = .init(capacity: 8)
+        let header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header =
+            .init(capacity: 8)
         #expect(header.isEmpty == true)
         #expect(!header.isFull == true)
         #expect(header.occupancy == 0)
@@ -19,7 +20,8 @@ struct `Buffer.Slab.Header` {
 
     @Test
     func `isOccupied tracks bitmap state`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header = .init(capacity: 8)
+        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header =
+            .init(capacity: 8)
         let slot: Bit.Index = 3
         #expect(!header.isOccupied(at: slot) == true)
 
@@ -29,7 +31,8 @@ struct `Buffer.Slab.Header` {
 
     @Test
     func `occupancy reflects popcount`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header = .init(capacity: 8)
+        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header =
+            .init(capacity: 8)
         header.bitmap[0] = true
         header.bitmap[3] = true
         header.bitmap[7] = true
@@ -38,7 +41,8 @@ struct `Buffer.Slab.Header` {
 
     @Test
     func `firstVacant scans for empty slot`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header = .init(capacity: 4)
+        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header =
+            .init(capacity: 4)
         header.bitmap[0] = true
         header.bitmap[1] = true
         let vacant = header.firstVacant(max: header.bitmap.capacity.maximum)
@@ -47,7 +51,8 @@ struct `Buffer.Slab.Header` {
 
     @Test
     func `firstVacant returns nil when full`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header = .init(capacity: 4)
+        var header: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header =
+            .init(capacity: 4)
         header.bitmap[0] = true
         header.bitmap[1] = true
         header.bitmap[2] = true

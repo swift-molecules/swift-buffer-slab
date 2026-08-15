@@ -26,16 +26,21 @@ import Testing
 struct `Buffer.Slab.Inline - Release Safety` {
 
     @Test
-    func `insert on the documented triggering shape traps under release and succeeds under debug`() async {
+    func `insert on the documented triggering shape traps under release and succeeds under debug`()
+        async
+    {
         if _isDebugAssertConfiguration() {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<4>()
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<
+                4
+            >()
             let slot: Bit.Index.Bounded<4> = 2
             buffer.insert(42, at: slot)
             #expect(buffer.occupancy == 1)
             #expect(buffer.isOccupied(at: slot) == true)
         } else {
             await #expect(processExitsWith: .failure) {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<4>()
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+                    .Inline<4>()
                 let slot: Bit.Index.Bounded<4> = 2
                 buffer.insert(42, at: slot)
             }
@@ -45,13 +50,16 @@ struct `Buffer.Slab.Inline - Release Safety` {
     @Test
     func `remove traps under release and succeeds under debug`() async {
         if _isDebugAssertConfiguration() {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<4>()
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<
+                4
+            >()
             let slot: Bit.Index.Bounded<4> = 1
             buffer.insert(10, at: slot)
             #expect(buffer.remove(at: slot) == 10)
         } else {
             await #expect(processExitsWith: .failure) {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<4>()
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+                    .Inline<4>()
                 let slot: Bit.Index.Bounded<4> = 1
                 _ = buffer.remove(at: slot)
             }

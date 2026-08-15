@@ -92,7 +92,9 @@ struct `Buffer.Slab.Inline` {
 
     @Test
     func `drain removes all elements`() throws {
-        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<8>([10, 20, 30])
+        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<
+            8
+        >([10, 20, 30])
         var drained: [Int] = []
         buffer.drain { drained.append($0) }
         #expect(buffer.isEmpty == true)
@@ -101,7 +103,9 @@ struct `Buffer.Slab.Inline` {
 
     @Test
     func `removeAll clears buffer`() throws {
-        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<8>([1, 2, 3])
+        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<
+            8
+        >([1, 2, 3])
         buffer.removeAll()
         #expect(buffer.isEmpty == true)
         #expect(buffer.occupancy == 0)
@@ -118,9 +122,13 @@ struct `Buffer.Slab.Inline` {
 
     @Test
     func `Sequence.Protocol iteration (Copyable)`() throws {
-        let buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<8>([10, 20, 30])
+        let buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<
+            8
+        >([10, 20, 30])
         var collected: [Int] = []
-        var iter: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<8>.Iterator = buffer.makeIterator()
+        var iter:
+            Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<8>.Iterator =
+                buffer.makeIterator()
         while let value = iter.next() {
             collected.append(value)
         }

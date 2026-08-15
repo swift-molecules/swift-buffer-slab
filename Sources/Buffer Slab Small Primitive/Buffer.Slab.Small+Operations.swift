@@ -109,7 +109,8 @@ extension Buffer.Slab.Small where S: ~Copyable {
     ///
     /// - Precondition: The slot is not occupied.
     @inlinable
-    public mutating func insert<E>(_ element: consuming E, at slot: Bit.Index) where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
+    public mutating func insert<E>(_ element: consuming E, at slot: Bit.Index)
+    where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
         switch _storage {
         case .heap(var buf):
             buf.insert(consume element, at: slot)
@@ -122,7 +123,9 @@ extension Buffer.Slab.Small where S: ~Copyable {
             } else {
                 self = Self(_storage: .inline(consume buf))
                 _spillToHeapMoving(coveringAtLeast: slot)
-                guard case .heap(var buf) = _storage else { fatalError("expected heap mode after spill") }
+                guard case .heap(var buf) = _storage else {
+                    fatalError("expected heap mode after spill")
+                }
                 buf.insert(consume element, at: slot)
                 self = Self(_storage: .heap(consume buf))
             }
@@ -163,7 +166,8 @@ extension Buffer.Slab.Small where S: ~Copyable {
     ///
     /// - Precondition: The slot is occupied.
     @inlinable
-    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element {
+    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
+    {
         switch _storage {
         case .heap(var buf):
             let old = buf.update(at: slot, with: consume element)
@@ -207,7 +211,8 @@ extension Buffer.Slab.Small where S: ~Copyable {
     ///   range). fable-448 F-002: the new capacity is `max(slot + 1, inlineCapacity * 2)` — the
     ///   normal doubling growth is not enough when a sparse `insert(at:)` names a slot past it.
     @usableFromInline
-    mutating func _spillToHeapMoving<E>(coveringAtLeast slot: Bit.Index) where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
+    mutating func _spillToHeapMoving<E>(coveringAtLeast slot: Bit.Index)
+    where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
         switch _storage {
         case .heap(let buf):
             self = Self(_storage: .heap(consume buf))

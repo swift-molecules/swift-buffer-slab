@@ -69,5 +69,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
 /// ## Non-Goals
 ///
 /// - Not for direct use; package-scoped.
-extension Buffer.Slab.Small._Representation: @unsafe @unchecked Sendable where S: ~Copyable, S: Sendable, S.Element: Sendable {}
+extension Buffer.Slab.Small._Representation: @unsafe @unchecked Sendable
+where S: ~Copyable, S: Sendable, S.Element: Sendable {}
 extension Buffer.Slab.Small: Sendable where S: ~Copyable, S: Sendable, S.Element: Sendable {}

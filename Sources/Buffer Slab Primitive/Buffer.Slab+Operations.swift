@@ -18,7 +18,9 @@ extension Buffer.Slab where S: ~Copyable {
     /// Other substrates construct their storage and use `init(header:storage:)`-style
     /// wiring through their own factories.
     @inlinable
-    public init<E: ~Copyable, Resource: Memory.Growable & ~Copyable>(minimumCapacity: Index<E>.Count) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
+    public init<E: ~Copyable, Resource: Memory.Growable & ~Copyable>(
+        minimumCapacity: Index<E>.Count
+    ) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
         let storage = S.create(minimumCapacity: minimumCapacity)
         self.init(
             header: Self.Header(capacity: storage.capacity.retag(Bit.self)),
@@ -91,7 +93,8 @@ extension Buffer.Slab where S: ~Copyable {
     ///
     /// - Precondition: The slot is occupied.
     @inlinable
-    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element {
+    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
+    {
         Self.update(at: slot, with: consume element, storage: &box.storage)
     }
 

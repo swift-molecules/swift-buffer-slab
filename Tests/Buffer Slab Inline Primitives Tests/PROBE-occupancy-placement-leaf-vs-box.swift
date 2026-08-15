@@ -89,7 +89,9 @@ struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
         buffer.insert(42, at: s2)
         let occ = buffer.occupancy
         let o2 = buffer.isOccupied(at: s2)
-        print("PC[real box, Inline4, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]")
+        print(
+            "PC[real box, Inline4, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]"
+        )
     }
 
     @Test
@@ -102,7 +104,9 @@ struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
         buffer.insert(40, at: s4)
         buffer.insert(70, at: s7)
         let occ = buffer.occupancy
-        print("PC[real box, Inline8, sparse 0/4/7]: occupancy=\(String(describing: occ))  [correct: 3]")
+        print(
+            "PC[real box, Inline8, sparse 0/4/7]: occupancy=\(String(describing: occ))  [correct: 3]"
+        )
     }
 }
 
@@ -156,7 +160,9 @@ struct `OccupancyPlacementProbe - T1 (real Store.Inline: class vs struct)` {
         box.insert(42, at: 2)
         let occ = box.occupancy
         let o2 = box.isOccupied(at: 2)
-        print("T1Box[class, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]")
+        print(
+            "T1Box[class, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]"
+        )
     }
 
     @Test
@@ -165,7 +171,9 @@ struct `OccupancyPlacementProbe - T1 (real Store.Inline: class vs struct)` {
         leaf.insert(42, at: 2)
         let occ = leaf.occupancy
         let o2 = leaf.isOccupied(at: 2)
-        print("T1Leaf[struct, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [escapes: 1/true ; also-DSE: 0/false]")
+        print(
+            "T1Leaf[struct, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [escapes: 1/true ; also-DSE: 0/false]"
+        )
     }
 }
 
@@ -237,7 +245,9 @@ struct `OccupancyPlacementProbe - T0/T2 (hand-built leaf end-shape)` {
         let box = T0Box<Int>()
         box.insert(42, at: 2)
         let occ = box.occupancy
-        print("T0Box[class, hand-built cells, insert@2]: occupancy=\(String(describing: occ))  [correct: 1]")
+        print(
+            "T0Box[class, hand-built cells, insert@2]: occupancy=\(String(describing: occ))  [correct: 1]"
+        )
     }
 
     @Test
@@ -248,8 +258,12 @@ struct `OccupancyPlacementProbe - T0/T2 (hand-built leaf end-shape)` {
             leaf.insert(Counted(2, ledger), at: 2)
             let occ = leaf.occupancy
             let o2 = leaf.isOccupied(at: 2)
-            print("T2Leaf[struct, hand-built cells, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true]")
+            print(
+                "T2Leaf[struct, hand-built cells, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true]"
+            )
         }
-        print("T2Leaf single-free: total=\(ledger.total) maxPerID=\(ledger.maxPerID)  [correct: 1/1 ; bitmap-lost: 0/0]")
+        print(
+            "T2Leaf single-free: total=\(ledger.total) maxPerID=\(ledger.maxPerID)  [correct: 1/1 ; bitmap-lost: 0/0]"
+        )
     }
 }

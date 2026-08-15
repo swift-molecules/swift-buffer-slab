@@ -21,7 +21,11 @@ extension Property.Borrow where Base: ~Copyable {
     @inlinable
     public func occupied<Element>(
         _ body: (Bit.Index) -> Void
-    ) where Tag == Sequence.ForEach, Base == Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab {
+    )
+    where
+        Tag == Sequence.ForEach,
+        Base == Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab
+    {
         base.value.header.bitmap.ones.forEach(body)
     }
 }
