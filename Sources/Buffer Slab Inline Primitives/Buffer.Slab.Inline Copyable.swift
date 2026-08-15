@@ -52,7 +52,9 @@ extension Buffer.Slab.Inline: Iterable where S: ~Copyable, S.Element: Copyable {
     /// window). `Store.Inline` vends no public base pointer, so the prior cached-pointer
     /// iterator is replaced by this snapshot. INTERIM DEBT (eager + allocates) — dissolves
     /// with the deferred occupancy decision (HANDOFF-sparse-occupancy-placement.md).
-    public struct Iterator: Iterator_Primitive.Iterator.`Protocol`, IteratorProtocol, @unchecked Sendable {
+    public struct Iterator: Iterator_Primitive.Iterator.`Protocol`, IteratorProtocol,
+        @unchecked Sendable
+    {
         // WHY: Category B — value-semantic owned snapshot. `@unchecked` bridges the
         // WHY: `[S.Element]` (unconstrained-Copyable) Sendable-inference gap, preserving
         // WHY: the iterator's prior Sendable surface; ownership is unique (a moved copy).
@@ -84,7 +86,9 @@ extension Buffer.Slab.Inline: Iterable where S: ~Copyable, S.Element: Copyable {
 
     /// Returns the materializing iterator for the `Iterable` conformance.
     @_implements(Iterable,makeIterator())
-    public borrowing func iterableMakeIterator() -> Iterator_Primitive.Iterator.Materializing<Iterator> {
+    public borrowing func iterableMakeIterator()
+        -> Iterator_Primitive.Iterator.Materializing<Iterator>
+    {
         Iterator_Primitive.Iterator.Materializing(Iterator(elements: _occupiedElements()))
     }
 }

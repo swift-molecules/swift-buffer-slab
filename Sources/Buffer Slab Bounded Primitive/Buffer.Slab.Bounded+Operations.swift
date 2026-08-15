@@ -16,7 +16,9 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
     /// is fenced out — it does not conform `Memory.Growable`). Actual capacity comes from
     /// `storage.capacity` per H6.
     @inlinable
-    public init<E: ~Copyable, Resource: Memory.Growable & ~Copyable>(minimumCapacity: Index<E>.Count) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
+    public init<E: ~Copyable, Resource: Memory.Growable & ~Copyable>(
+        minimumCapacity: Index<E>.Count
+    ) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
         let storage = S.create(minimumCapacity: minimumCapacity)
         self.init(
             header: Buffer.Slab.Header(capacity: storage.capacity.retag(Bit.self)),
@@ -73,7 +75,8 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
     ///
     /// - Precondition: The slot is occupied.
     @inlinable
-    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element {
+    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
+    {
         Buffer.Slab.update(at: slot, with: consume element, storage: &box.storage)
     }
 

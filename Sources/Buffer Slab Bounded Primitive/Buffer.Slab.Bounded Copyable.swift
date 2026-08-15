@@ -40,7 +40,8 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
     ///
     /// - Complexity: O(`occupancy`)
     @inlinable
-    public func clone<E, Resource: Memory.Growable & ~Copyable>() -> Self where S == Storage<Memory.Allocator<Resource>>.Contiguous<E>, E: Copyable {
+    public func clone<E, Resource: Memory.Growable & ~Copyable>() -> Self
+    where S == Storage<Memory.Allocator<Resource>>.Contiguous<E>, E: Copyable {
         let capacity = storage.capacity
         var fresh = S.create(minimumCapacity: capacity)
         header.bitmap.ones.forEach { bitIndex in
@@ -66,7 +67,10 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
     ///   - capacity: The fixed capacity for the buffer.
     /// - Throws: ``Error/capacityExceeded`` if `elements.count` exceeds `capacity`.
     @inlinable
-    public init<E, Resource: Memory.Growable & ~Copyable>(_ elements: [E], capacity: UInt) throws(Self.Error) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
+    public init<E, Resource: Memory.Growable & ~Copyable>(
+        _ elements: [E],
+        capacity: UInt
+    ) throws(Self.Error) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
         guard elements.count <= Int(capacity) else { throw .capacityExceeded }
         var buffer = Self(minimumCapacity: Index<E>.Count(Cardinal(capacity)))
         for (i, element) in elements.enumerated() {

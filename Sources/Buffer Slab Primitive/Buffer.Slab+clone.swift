@@ -29,7 +29,8 @@ extension Buffer.Slab where S: ~Copyable {
     ///
     /// - Complexity: O(`occupancy`)
     @inlinable
-    public func clone<E, Resource: Memory.Growable & ~Copyable>() -> Self where S == Storage<Memory.Allocator<Resource>>.Contiguous<E>, E: Copyable {
+    public func clone<E, Resource: Memory.Growable & ~Copyable>() -> Self
+    where S == Storage<Memory.Allocator<Resource>>.Contiguous<E>, E: Copyable {
         let capacity = storage.capacity
         var fresh = S.create(minimumCapacity: capacity)
         header.bitmap.ones.forEach { bitIndex in

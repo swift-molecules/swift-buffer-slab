@@ -59,7 +59,10 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     ///
     /// - Precondition: The slot is not occupied.
     @inlinable
-    public mutating func insert(_ element: consuming S.Element, at slot: Bit.Index.Bounded<wordCount>) {
+    public mutating func insert(
+        _ element: consuming S.Element,
+        at slot: Bit.Index.Bounded<wordCount>
+    ) {
         box.insert(consume element, at: Bit.Index(slot))
     }
 
@@ -75,7 +78,10 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     ///
     /// - Precondition: The slot is occupied.
     @inlinable
-    public mutating func update(at slot: Bit.Index.Bounded<wordCount>, with element: consuming S.Element) -> S.Element {
+    public mutating func update(
+        at slot: Bit.Index.Bounded<wordCount>,
+        with element: consuming S.Element
+    ) -> S.Element {
         box.update(at: Bit.Index(slot), with: consume element)
     }
 
@@ -157,7 +163,8 @@ extension Buffer.Slab.Inline where S: ~Copyable {
 
     /// Replaces the element at the given slot and returns the old element.
     @inlinable
-    package mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element {
+    package mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
+    {
         box.update(at: slot, with: consume element)
     }
 }

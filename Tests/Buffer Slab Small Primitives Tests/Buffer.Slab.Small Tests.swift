@@ -203,7 +203,8 @@ struct `Buffer.Slab.Small` {
 
     @Test
     func `deinit cleans up inline mode`() {
-        var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<4>? = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<4>()
+        var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<4>? =
+            Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<4>()
         buffer!.insert(10, at: 0)
         buffer!.insert(20, at: 2)
         buffer = nil
@@ -212,7 +213,8 @@ struct `Buffer.Slab.Small` {
 
     @Test
     func `deinit cleans up heap mode`() {
-        var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<2>? = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<2>()
+        var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<2>? =
+            Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<2>()
         buffer!.insert(10, at: 0)
         buffer!.insert(20, at: 1)
         buffer!.insert(30, at: 2)

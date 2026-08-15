@@ -47,8 +47,14 @@ struct `Buffer.Slab.Inline - Deinit` {
     }
 
     private struct _BareWrapper<Element: ~Copyable, let wordCount: Int>: ~Copyable {
-        var _buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab.Inline<wordCount>
-        init() { self._buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab.Inline() }
+        var _buffer:
+            Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab.Inline<
+                wordCount
+            >
+        init() {
+            self._buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab
+                .Inline()
+        }
         deinit {}
     }
 
@@ -111,9 +117,13 @@ struct `Buffer.Slab.Inline - Single-Free` {
         let ledger = Ledger()
         let n = 6
         do {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab.Inline<8>()
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab
+                .Inline<8>()
             (0..<n).forEach { i in
-                buffer.insert(Counted(i, ledger), at: Bit.Index.Bounded<8>(Bit.Index(Ordinal(UInt(i))))!)
+                buffer.insert(
+                    Counted(i, ledger),
+                    at: Bit.Index.Bounded<8>(Bit.Index(Ordinal(UInt(i))))!
+                )
             }
         }  // buffer (and its Box) drop here — Box.deinit walks the bitmap
         #expect(ledger.total == n)  // not 0 (no leak), not 2n (no double-free)
@@ -125,7 +135,8 @@ struct `Buffer.Slab.Inline - Single-Free` {
     func `sparse inline teardown frees only occupied slots, once each`() {
         let ledger = Ledger()
         do {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab.Inline<8>()
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab
+                .Inline<8>()
             let s0: Bit.Index.Bounded<8> = 0
             let s4: Bit.Index.Bounded<8> = 4
             let s7: Bit.Index.Bounded<8> = 7
@@ -141,7 +152,8 @@ struct `Buffer.Slab.Inline - Single-Free` {
     func `remove then teardown never double-frees a removed slot`() {
         let ledger = Ledger()
         do {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab.Inline<8>()
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab
+                .Inline<8>()
             let s0: Bit.Index.Bounded<8> = 0
             let s1: Bit.Index.Bounded<8> = 1
             buffer.insert(Counted(1, ledger), at: s0)
@@ -171,7 +183,9 @@ extension `Buffer.Slab.Inline - Single-Free`.Ledger {
 struct `Buffer.Slab.Header.Static - Release Isolation` {
     @Test
     func `local Header.Static bitmap set persists`() {
-        var h = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header.Static<8>()
+        var h = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header.Static<
+            8
+        >()
         let s2: Bit.Index = Bit.Index(Ordinal(2 as UInt))
         h.bitmap[s2] = true
         #expect(h.isOccupied(at: s2) == true)
