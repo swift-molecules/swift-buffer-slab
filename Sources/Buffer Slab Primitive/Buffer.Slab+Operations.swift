@@ -3,7 +3,7 @@ public import Bit_Vector_Bounded_Primitives
 public import Memory_Allocator_Primitive
 public import Memory_Allocator_Protocol_Primitives
 import Ordinal_Primitives_Standard_Library_Integration
-public import Sequence_Primitives
+import Sequence_Primitives
 public import Storage_Contiguous_Primitives
 
 // MARK: - Extensions for Slab (declared in Core)

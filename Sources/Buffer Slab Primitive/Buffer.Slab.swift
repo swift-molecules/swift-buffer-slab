@@ -1,5 +1,5 @@
 import Affine_Primitives_Standard_Library_Integration
-public import Bit_Vector_Bounded_Primitives
+import Bit_Vector_Bounded_Primitives
 import Index_Primitives
 import Ordinal_Primitives_Standard_Library_Integration
 public import Storage_Protocol_Primitives

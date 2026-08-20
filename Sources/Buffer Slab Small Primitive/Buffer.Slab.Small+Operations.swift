@@ -3,7 +3,7 @@ public import Finite_Bounded_Primitives
 public import Memory_Allocator_Primitive
 import Ordinal_Primitives_Standard_Library_Integration
 public import Storage_Contiguous_Primitives
-public import Storage_Protocol_Primitives
+import Storage_Protocol_Primitives
 
 // MARK: - Extensions for Slab.Small (declared in Core)
 

@@ -1,9 +1,9 @@
 import Affine_Primitives_Standard_Library_Integration
-public import Bit_Vector_Bounded_Primitives
+import Bit_Vector_Bounded_Primitives
 import Index_Primitives
 import Ordinal_Primitives_Standard_Library_Integration
-public import Storage_Protocol_Primitives
-public import Store_Protocol_Primitives
+import Storage_Protocol_Primitives
+import Store_Protocol_Primitives
 
 extension Buffer.Slab where S: ~Copyable {
     // MARK: - Bounded (Fixed-Capacity)
