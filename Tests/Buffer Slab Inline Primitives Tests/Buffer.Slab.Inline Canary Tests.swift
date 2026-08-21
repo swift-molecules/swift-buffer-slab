@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Buffer_Slab_Inline_Primitives
 import Buffer_Slab_Primitives_Test_Support
 import Finite_Bounded_Primitives
@@ -17,13 +6,6 @@ import Memory_Heap_Primitives
 import Storage_Contiguous_Primitives
 import Testing
 
-// RELEASE-GUARD (swift-issue-inlinearray-class-field-write-elision): the inline-box path is
-// release-broken (occupancy-bitmap writes elided under `-O`). This deinit harness passes in
-// release only by accident (contiguous inserts make the un-reset substrate ledger free the
-// right slots), so it runs in DEBUG and SKIPS under `-O`, pending the occupancy ruling
-// (HANDOFF-sparse-occupancy-placement.md). `_isDebugAssertConfiguration()` is false under `-O`.
-/// Regression test: Storage.Inline deinit cleans up elements through
-/// cross-module member destruction chain.
 @Suite(
     .disabled(
         if: !_isDebugAssertConfiguration(),
@@ -79,17 +61,6 @@ extension `Buffer.Slab.Inline - Deinit`.Tracker {
     func append(_ id: Int) { _storage.append(id) }
 }
 
-// RELEASE-GUARD (swift-issue-inlinearray-class-field-write-elision): runs in DEBUG, skips
-// under `-O` (the reconstructed single-free harness — passes in release only by accident on
-// contiguous inserts; sparse occupancy is release-broken). Pending HANDOFF-sparse-occupancy-placement.md.
-/// Deinit-COUNTING single-free acceptance harness (reconstructs the probe scratch).
-///
-/// Each occupied element's `deinit` MUST run EXACTLY once when the buffer is torn down —
-/// never twice (double-free) nor zero (leak). The bitmap-driven `Box.deinit` is the SOLE
-/// teardown; the `Store.Inline` substrate ledger is kept `.empty`, so its own oracle no-ops.
-/// Run in BOTH debug and release (`swift test` and `swift test -c release`) — the probe
-/// proved tracked init double-frees in release, so the untracked-ledger discipline is what
-/// this gate protects.
 @Suite(
     .disabled(
         if: !_isDebugAssertConfiguration(),
@@ -125,9 +96,9 @@ struct `Buffer.Slab.Inline - Single-Free` {
                     at: Bit.Index.Bounded<8>(Bit.Index(Ordinal(UInt(i))))!
                 )
             }
-        }  // buffer (and its Box) drop here — Box.deinit walks the bitmap
-        #expect(ledger.total == n)  // not 0 (no leak), not 2n (no double-free)
-        #expect(ledger.maxPerID == 1)  // each id freed EXACTLY once — single-free
+        }
+        #expect(ledger.total == n)
+        #expect(ledger.maxPerID == 1)
         #expect(ledger.distinctIDs == n)
     }
 
@@ -158,12 +129,12 @@ struct `Buffer.Slab.Inline - Single-Free` {
             let s1: Bit.Index.Bounded<8> = 1
             buffer.insert(Counted(1, ledger), at: s0)
             buffer.insert(Counted(2, ledger), at: s1)
-            _ = buffer.remove(at: s0)  // frees id 1 exactly once
+            _ = buffer.remove(at: s0)
             #expect(ledger.total == 1)
             #expect(ledger.maxPerID == 1)
-        }  // teardown frees id 2 once; the removed slot 0 (bitmap cleared) is NOT re-freed
+        }
         #expect(ledger.total == 2)
-        #expect(ledger.maxPerID == 1)  // id 1 NOT double-freed by the Box teardown
+        #expect(ledger.maxPerID == 1)
     }
 }
 
@@ -174,11 +145,6 @@ extension `Buffer.Slab.Inline - Single-Free`.Ledger {
     var distinctIDs: Int { _counts.count }
 }
 
-/// DIAGNOSTIC — release-miscompile isolation.
-///
-/// Mutates a LOCAL `Header.Static` (its inline `Bit.Vector.Static` bitmap) with NO box /
-/// `.Inline` layering. If THIS fails under `-O`, the inline-bitmap mutation itself is the
-/// miscompile; if it passes, the box interaction is.
 @Suite
 struct `Buffer.Slab.Header.Static - Release Isolation` {
     @Test

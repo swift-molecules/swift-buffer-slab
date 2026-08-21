@@ -5,20 +5,8 @@ import Memory_Heap_Primitives
 import Storage_Contiguous_Primitives
 import Testing
 
-// `Buffer.Slab` / `.Bounded` are MOVE-ONLY (the 90f5991 reshape: the element-free
-// `Storage.Contiguous` is unconditionally `~Copyable`, so the slab never shares a box
-// across copies and is exclusively owned). The former CoW capability
-// (`isUnique`/`ensureUnique` divergence) was MIGRATED to an explicit `clone()` — a fresh,
-// occupancy-aware, independent deep copy — NOT removed. This suite therefore tests
-// `clone()` (the surviving capability) and single-free teardown (the box's bitmap-driven
-// `deinit`); the withdrawn `isUnique`/`ensureUnique` sharing tests, which have no `clone()`
-// analog, are dropped. (Holding patch: file name retained for minimal churn; the intent is
-// now clone + teardown, not CoW. See HANDOFF-storage-inline-finalization.md.)
-
 @Suite
 struct `Buffer.Slab Clone & Teardown` {
-
-    // MARK: - Buffer.Slab.clone()
 
     @Test
     func `clone preserves the occupied slots`() {
@@ -34,7 +22,7 @@ struct `Buffer.Slab Clone & Teardown` {
         #expect(copy[Bit.Index(Ordinal(0 as UInt))] == 10)
         #expect(copy[Bit.Index(Ordinal(3 as UInt))] == 20)
         #expect(copy[Bit.Index(Ordinal(7 as UInt))] == 30)
-        // `clone()` borrows (does not consume) — the original remains valid.
+
         #expect(original.occupancy == 3)
     }
 
@@ -48,19 +36,16 @@ struct `Buffer.Slab Clone & Teardown` {
 
         var copy = original.clone()
 
-        // The deep copy preserves the occupied slots exactly.
         #expect(copy.occupancy == 2)
         #expect(copy[Bit.Index(Ordinal(0 as UInt))] == 10)
         #expect(copy[Bit.Index(Ordinal(3 as UInt))] == 20)
 
-        // Mutations to the copy do NOT affect the original.
         copy.insert(77, at: 5)
         _ = copy.remove(at: 0)
         #expect(original.isOccupied(at: 5) == false)
         #expect(original.isOccupied(at: 0) == true)
         #expect(original.occupancy == 2)
 
-        // And mutations to the original do NOT affect the clone.
         original.insert(99, at: 6)
         #expect(copy.isOccupied(at: 6) == false)
     }
@@ -75,12 +60,9 @@ struct `Buffer.Slab Clone & Teardown` {
         #expect(copy.occupancy == .zero)
     }
 
-    // MARK: - Teardown (single-free)
-
     @Test
     func `original and clone each free exactly once`() {
-        // Two independent boxes (original + clone). Each box's bitmap-driven `deinit`
-        // frees ONLY its own occupied slots — dropping both never double-frees.
+
         var original = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
             minimumCapacity: 4
         )
@@ -89,12 +71,10 @@ struct `Buffer.Slab Clone & Teardown` {
         do {
             let copy = original.clone()
             #expect(copy.occupancy == 2)
-        }  // copy's box deinit frees its 2 slots once
-        // The original is unaffected by the clone's teardown.
-        #expect(original.occupancy == 2)
-    }  // original's box deinit frees its 2 slots once
+        }
 
-    // MARK: - Buffer.Slab.Bounded.clone()
+        #expect(original.occupancy == 2)
+    }
 
     @Test
     func `Bounded clone preserves the occupied slots`() {
@@ -110,8 +90,6 @@ struct `Buffer.Slab Clone & Teardown` {
         #expect(copy.peek(at: 3) == 20)
         #expect(original.occupancy == 2)
     }
-
-    // MARK: - Bitmap Sync (move-only — assert directly on the mutated buffer)
 
     @Test
     func `bitmap stays synced after insert-remove cycle`() {

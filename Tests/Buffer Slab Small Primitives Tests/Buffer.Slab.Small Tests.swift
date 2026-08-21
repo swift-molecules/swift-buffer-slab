@@ -5,11 +5,6 @@ import Memory_Heap_Primitives
 import Storage_Contiguous_Primitives
 import Testing
 
-// RELEASE-GUARD (swift-issue-inlinearray-class-field-write-elision): `.Small`'s inline arm
-// is `Buffer.Slab.Inline`, whose occupancy-bitmap writes are elided under `-O`. These tests
-// exercise the inline arm (and the inline→heap spill transition), so they pass in release only
-// by luck — runs in DEBUG, skips under `-O`, pending HANDOFF-sparse-occupancy-placement.md.
-// (`.Small`'s heap arm is `Buffer.Slab`, covered in release by the base "Buffer.Slab" suites.)
 @Suite(
     .disabled(
         if: !_isDebugAssertConfiguration(),
@@ -58,7 +53,6 @@ struct `Buffer.Slab.Small` {
         #expect(buffer.isFull == true)
         #expect(buffer.isSpilled == false)
 
-        // Third insert triggers spill
         buffer.insert(30, at: 2)
         #expect(buffer.isSpilled == true)
         #expect(buffer.occupancy == 3)
@@ -208,7 +202,7 @@ struct `Buffer.Slab.Small` {
         buffer!.insert(10, at: 0)
         buffer!.insert(20, at: 2)
         buffer = nil
-        // No crash = deinit worked correctly
+
     }
 
     @Test
@@ -219,6 +213,6 @@ struct `Buffer.Slab.Small` {
         buffer!.insert(20, at: 1)
         buffer!.insert(30, at: 2)
         buffer = nil
-        // No crash = deinit worked correctly
+
     }
 }

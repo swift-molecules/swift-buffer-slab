@@ -136,6 +136,6 @@ struct `Buffer.Slab` {
         buffer!.insert(10, at: 0)
         buffer!.insert(20, at: 2)
         buffer = nil
-        // No crash = deinit worked correctly
+
     }
 }

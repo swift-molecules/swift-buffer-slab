@@ -7,19 +7,8 @@ import Ordinal_Primitives_Standard_Library_Integration
 public import Storage_Contiguous_Primitives
 public import Store_Protocol_Primitives
 
-// MARK: - Copyable-element features for Buffer.Slab.Bounded
-//
-// CoW (`ensureUnique`) is withdrawn at the storage tier: `Storage.Contiguous` is
-// unconditionally `~Copyable` with an explicit `copy()`, so `Buffer.Slab.Bounded`
-// is move-only and the former CoW-safe shadows are removed. What remains here is
-// genuinely Copyable-only and CoW-free: peek-by-value, array initialization, and
-// the explicit `clone()` deep copy.
-
 extension Buffer.Slab.Bounded where S: ~Copyable, S.Element: Copyable {
 
-    /// Reads the element at the given slot without removing it.
-    ///
-    /// - Precondition: The slot is occupied.
     @inlinable
     public func peek(at slot: Bit.Index) -> S.Element {
         let storageIndex = slot.retag(S.Element.self)
@@ -27,18 +16,8 @@ extension Buffer.Slab.Bounded where S: ~Copyable, S.Element: Copyable {
     }
 }
 
-// MARK: - Explicit deep copy (any growable column)
-
 extension Buffer.Slab.Bounded where S: ~Copyable {
 
-    /// Returns an independent copy of this bounded slab with its own box and
-    /// storage, preserving the fixed capacity.
-    ///
-    /// Occupancy-aware: only the `header.bitmap.ones` slots are copied; vacant
-    /// slots are skipped. Allocation-generic ([DS-029] form 2) over any
-    /// `Resource: Memory.Growable` — heap and `Memory.Small<n>` columns clone uniformly.
-    ///
-    /// - Complexity: O(`occupancy`)
     @inlinable
     public func clone<E, Resource: Memory.Growable & ~Copyable>() -> Self
     where S == Storage<Memory.Allocator<Resource>>.Contiguous<E>, E: Copyable {
@@ -53,19 +32,8 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
     }
 }
 
-// MARK: - Array Initialization
-
 extension Buffer.Slab.Bounded where S: ~Copyable {
 
-    /// Creates a bounded slab buffer populated with the given elements.
-    ///
-    /// Elements are inserted at sequential slot indices starting from zero.
-    /// Allocation-generic ([DS-029] form 2) over any `Resource: Memory.Growable`.
-    ///
-    /// - Parameters:
-    ///   - elements: The elements to populate the buffer with.
-    ///   - capacity: The fixed capacity for the buffer.
-    /// - Throws: ``Error/capacityExceeded`` if `elements.count` exceeds `capacity`.
     @inlinable
     public init<E, Resource: Memory.Growable & ~Copyable>(
         _ elements: [E],

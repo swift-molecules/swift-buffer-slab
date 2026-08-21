@@ -96,7 +96,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `deinit cleans up occupied slots`() {
-        // Create and drop — deinit should iterate bitmap.ones
+
         var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded? =
             Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
                 minimumCapacity: 4
@@ -104,6 +104,6 @@ struct `Buffer.Slab.Bounded` {
         buffer!.insert(10, at: 0)
         buffer!.insert(20, at: 2)
         buffer = nil
-        // No crash = deinit worked correctly
+
     }
 }

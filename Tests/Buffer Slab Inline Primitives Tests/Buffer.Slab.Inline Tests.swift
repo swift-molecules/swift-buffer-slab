@@ -6,12 +6,6 @@ import Memory_Heap_Primitives
 import Storage_Contiguous_Primitives
 import Testing
 
-// RELEASE-GUARD — swift-institute/Issues/swift-issue-inlinearray-class-field-write-elision:
-// the InlineArray-backed occupancy bitmap, stored in the class `Box` field, has its writes
-// elided under `-O`, so `.Inline` sparse occupancy is wrong in release. These functional tests
-// run in DEBUG (proving the logic is correct) and SKIP under `-O` (documented), pending the
-// occupancy-placement ruling (~/Developer/.handoffs/HANDOFF-sparse-occupancy-placement.md).
-// (`_isDebugAssertConfiguration()` is true under `-Onone`/debug, false under `-O`/release.)
 @Suite(
     .disabled(
         if: !_isDebugAssertConfiguration(),

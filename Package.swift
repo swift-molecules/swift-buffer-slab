@@ -12,12 +12,12 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        // MARK: - Type modules (lean ~Copyable types; Copyable-requiring conformances live in the ops modules per [MOD-004])
+
         .library(name: "Buffer Slab Primitive", targets: ["Buffer Slab Primitive"]),
         .library(name: "Buffer Slab Bounded Primitive", targets: ["Buffer Slab Bounded Primitive"]),
         .library(name: "Buffer Slab Inline Primitive", targets: ["Buffer Slab Inline Primitive"]),
         .library(name: "Buffer Slab Small Primitive", targets: ["Buffer Slab Small Primitive"]),
-        // MARK: - Ops modules (one per variant); `Buffer Slab Primitives` doubles as the [MOD-005] umbrella
+
         .library(name: "Buffer Slab Primitives", targets: ["Buffer Slab Primitives"]),
         .library(
             name: "Buffer Slab Bounded Primitives",
@@ -98,7 +98,6 @@ let package = Package(
     ],
     targets: [
 
-        // MARK: - Type modules — lean ~Copyable types + @usableFromInline internal ops co-located with storage ([MOD-036])
         .target(
             name: "Buffer Slab Primitive",
             dependencies: [
@@ -268,10 +267,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Ops modules — Copyable-requiring conformances isolated per [MOD-004].
-        //         `Buffer Slab Primitives` (the base conformances module) doubles as the
-        //         [MOD-005] umbrella: it re-exports every variant module (two module forms only —
-        //         `… Primitive` type modules and `… Primitives` ops modules).
         .target(
             name: "Buffer Slab Primitives",
             dependencies: [
@@ -332,7 +327,7 @@ let package = Package(
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),
-        // MARK: - Test Support
+
         .target(
             name: "Buffer Slab Primitives Test Support",
             dependencies: [
@@ -348,7 +343,6 @@ let package = Package(
             path: "Tests/Support"
         ),
 
-        // MARK: - Tests
         .testTarget(
             name: "Buffer Slab Primitives Tests",
             dependencies: [
@@ -380,7 +374,7 @@ let package = Package(
                     name: "Memory Allocator Primitive",
                     package: "swift-memory-allocation-primitives"
                 ),
-                // PROBE-only deps (HANDOFF-sparse-occupancy-placement Step 1): real Store.Inline substrate for the T1 isolation leaf.
+
                 .product(name: "Store Inline Primitives", package: "swift-storage-primitives"),
                 .product(
                     name: "Store Initialization Primitives",

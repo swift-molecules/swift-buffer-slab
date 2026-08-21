@@ -5,11 +5,8 @@ import Ordinal_Primitives_Standard_Library_Integration
 public import Storage_Contiguous_Primitives
 import Storage_Protocol_Primitives
 
-// MARK: - Extensions for Slab.Small (declared in Core)
-
 extension Buffer.Slab.Small where S: ~Copyable {
 
-    /// Creates an empty small slab buffer with inline storage.
     @inlinable
     public init() {
         self.init(
@@ -17,7 +14,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         )
     }
 
-    /// Whether the buffer has spilled to heap storage.
     @inlinable
     public var isSpilled: Bool {
         switch _storage {
@@ -26,9 +22,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    // MARK: - Properties
-
-    /// The number of occupied slots.
     @inlinable
     public var occupancy: Bit.Index.Count {
         switch _storage {
@@ -37,16 +30,9 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// The number of elements logically held by the buffer, in the element domain.
-    ///
-    /// A slab's native ledger counts occupied bitmap slots (``occupancy``, a
-    /// `Bit.Index.Count`). M7 re-tags that into the concrete element domain at this
-    /// ``Buffer/`Protocol``` `count` witness — one occupied slot IS one live element,
-    /// a numerically-sound phantom-label change (`.retag(Element.self)`).
     @inlinable
     public var count: Index<Element>.Count { occupancy.retag(Element.self) }
 
-    /// Whether no slots are occupied.
     @inlinable
     public var isEmpty: Bool {
         switch _storage {
@@ -55,7 +41,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// Whether all storage slots are occupied.
     @inlinable
     public var isFull: Bool {
         switch _storage {
@@ -64,17 +49,10 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// Whether a specific slot is occupied.
-    ///
-    /// fable-448 F-002: while in `.inline` mode, a slot at or past `inlineCapacity` can never
-    /// be occupied (`insert` always spills before writing there — see `insert(_:at:)`), so it
-    /// reads as vacant (`false`) rather than trapping. This keeps `isOccupied` total over every
-    /// `Bit.Index`, matching `firstVacant()`'s own range (which never yields such a slot).
     @inlinable
     public func isOccupied(at slot: Bit.Index) -> Bool {
         switch _storage {
-        // refined-C: base `Buffer.Slab` exposes a public `isOccupied(at:)`, so reach it
-        // directly rather than through the now-internal `header` ([MOD-036]).
+
         case .heap(let buf): return buf.isOccupied(at: slot)
 
         case .inline(let buf):
@@ -85,7 +63,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// Returns the first vacant slot, or `nil` if all slots are full.
     @inlinable
     public func firstVacant() -> Bit.Index? {
         switch _storage {
@@ -94,20 +71,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    // MARK: - Mutations
-
-    /// Inserts an element at the given slot.
-    ///
-    /// If inline storage is full, or `slot` falls outside the inline range, spills to heap
-    /// automatically using moves. The heap spill target is the common-tower
-    /// `Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E>` substrate.
-    ///
-    /// fable-448 F-002: the prior predicate spilled on occupancy alone (`!buf.isFull`), so a
-    /// sparse `slot >= inlineCapacity` on an otherwise near-empty buffer bypassed the spill and
-    /// reached the fixed inline store directly — an out-of-bounds write. Spilling is now also
-    /// forced whenever `slot` itself does not fit `Bit.Index.Bounded<inlineCapacity>`.
-    ///
-    /// - Precondition: The slot is not occupied.
     @inlinable
     public mutating func insert<E>(_ element: consuming E, at slot: Bit.Index)
     where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
@@ -132,16 +95,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// Removes and returns the element at the given slot.
-    ///
-    /// fable-448 F-002: bounds-checked in `.inline` mode (was unchecked — a slot at or past
-    /// `inlineCapacity` reached the fixed inline store's unbounded `remove` directly, an
-    /// out-of-bounds read/move). A slot past `inlineCapacity` was never occupiable while
-    /// inline (`insert` always spills before writing there), so this is a caller-contract
-    /// violation, not a recoverable case — it traps, matching `isOccupied`'s documented
-    /// precondition ("the slot is occupied").
-    ///
-    /// - Precondition: The slot is occupied.
     @inlinable
     public mutating func remove(at slot: Bit.Index) -> S.Element {
         switch _storage {
@@ -160,11 +113,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// Replaces the element at the given slot and returns the old element.
-    ///
-    /// fable-448 F-002: bounds-checked in `.inline` mode — see `remove(at:)`.
-    ///
-    /// - Precondition: The slot is occupied.
     @inlinable
     public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
     {
@@ -184,9 +132,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    /// Removes all elements from the buffer.
-    ///
-    /// Resets to inline mode.
     @inlinable
     public mutating func removeAll() {
         switch _storage {
@@ -201,15 +146,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
         }
     }
 
-    // MARK: - Spill
-
-    /// Moves inline elements to heap storage and activates heap mode.
-    ///
-    /// The heap spill target is the common-tower `Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E>` substrate.
-    ///
-    /// - Parameter slot: The slot the caller is about to insert at (possibly outside the inline
-    ///   range). fable-448 F-002: the new capacity is `max(slot + 1, inlineCapacity * 2)` — the
-    ///   normal doubling growth is not enough when a sparse `insert(at:)` names a slot past it.
     @usableFromInline
     mutating func _spillToHeapMoving<E>(coveringAtLeast slot: Bit.Index)
     where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
@@ -223,13 +159,6 @@ extension Buffer.Slab.Small where S: ~Copyable {
             let newCapacity = Index<E>.Count(UInt(Swift.max(requiredForSlot, inlineCapacity * 2)))
             var heap = Buffer.Slab(minimumCapacity: newCapacity)
 
-            // [MOD-037]: drain the inline buffer through its PUBLIC slot API and re-insert
-            // each occupied element at the SAME slot index on the heap, preserving the sparse
-            // bitmap positions. Reaching the Inline variant only through its public
-            // `isOccupied`/`remove` surface keeps Inline's storage internals
-            // `@usableFromInline internal` (refined-C) rather than pinned to `package` —
-            // the Small satellite no longer touches `buf.storage`/`buf.header` or the
-            // static `moveSlotToHeap` helper.
             var slot: Bit.Index = .zero
             let end = Bit.Index.Count(UInt(inlineCapacity)).map(Ordinal.init)
             while slot < end {
@@ -243,15 +172,13 @@ extension Buffer.Slab.Small where S: ~Copyable {
             }
 
             self = Self(_storage: .heap(consume heap))
-        // buf goes out of scope — deinit runs on empty (drained) state
+
         }
     }
 }
 
-// MARK: - Sequence.Drain.Protocol
-
 extension Buffer.Slab.Small: Sequence.Drain.`Protocol` where S: ~Copyable {
-    /// Removes every occupied element, consuming each through `body`.
+
     @inlinable
     public mutating func drain(_ body: (consuming S.Element) -> Void) {
         switch _storage {
@@ -267,10 +194,8 @@ extension Buffer.Slab.Small: Sequence.Drain.`Protocol` where S: ~Copyable {
     }
 }
 
-// MARK: - Property.Inout (.drain)
-
 extension Buffer.Slab.Small where S: ~Copyable {
-    /// In-place accessor that drains the buffer through the `Sequence.Drain` capability.
+
     @inlinable
     public var drain: Property<Sequence.Drain, Self>.Inout {
         mutating _read {
