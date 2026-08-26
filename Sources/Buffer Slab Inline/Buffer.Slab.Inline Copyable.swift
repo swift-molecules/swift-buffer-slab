@@ -1,8 +1,8 @@
-import Affine_Primitives_Standard_Library_Integration
-public import Finite_Bounded_Primitives
-public import Iterator_Chunk_Primitives
+import Affine_Standard_Library_Integration
+public import Finite_Bounded
+public import Iterator_Chunk
 public import Iterator_Primitive
-import Ordinal_Primitives_Standard_Library_Integration
+import Ordinal_Standard_Library_Integration
 
 extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
 

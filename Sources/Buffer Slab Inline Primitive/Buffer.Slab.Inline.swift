@@ -1,9 +1,9 @@
-import Affine_Primitives_Standard_Library_Integration
-import Bit_Vector_Static_Primitives
-import Index_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
-public import Store_Initialization_Primitives
-public import Store_Inline_Primitives
+import Affine_Standard_Library_Integration
+import Bit_Vector_Static
+import Index
+import Ordinal_Standard_Library_Integration
+public import Store_Initialization
+public import Store_Inline
 
 extension Buffer.Slab where S: ~Copyable {
 

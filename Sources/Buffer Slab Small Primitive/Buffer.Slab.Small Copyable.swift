@@ -1,6 +1,6 @@
-import Affine_Primitives_Standard_Library_Integration
-public import Finite_Bounded_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
+import Affine_Standard_Library_Integration
+public import Finite_Bounded
+import Ordinal_Standard_Library_Integration
 
 extension Buffer.Slab.Small where S: ~Copyable, S.Element: Copyable {
 

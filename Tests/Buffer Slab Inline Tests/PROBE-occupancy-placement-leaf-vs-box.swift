@@ -1,12 +1,12 @@
-import Buffer_Slab_Inline_Primitives
-import Buffer_Slab_Primitives_Test_Support
-import Finite_Bounded_Primitives
-import Index_Primitives
+import Buffer_Slab_Inline
+import Buffer_Slab_Test_Support
+import Finite_Bounded
+import Index
 import Memory_Allocator_Primitive
-import Memory_Heap_Primitives
-import Storage_Contiguous_Primitives
-import Store_Initialization_Primitives
-import Store_Inline_Primitives
+import Memory_Heap
+import Storage_Contiguous
+import Store_Initialization
+import Store_Inline
 import Testing
 
 private typealias Bitmap4 =

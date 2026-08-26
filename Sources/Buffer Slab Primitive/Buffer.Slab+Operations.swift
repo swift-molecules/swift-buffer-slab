@@ -1,10 +1,10 @@
-import Affine_Primitives_Standard_Library_Integration
-public import Bit_Vector_Bounded_Primitives
+import Affine_Standard_Library_Integration
+public import Bit_Vector_Bounded
 public import Memory_Allocator_Primitive
-public import Memory_Allocator_Protocol_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
-import Sequence_Primitives
-public import Storage_Contiguous_Primitives
+public import Memory_Allocator_Protocol
+import Ordinal_Standard_Library_Integration
+import Sequence
+public import Storage_Contiguous
 
 extension Buffer.Slab where S: ~Copyable {
 

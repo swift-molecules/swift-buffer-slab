@@ -1,6 +1,6 @@
-import Affine_Primitives_Standard_Library_Integration
-public import Growth_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
+import Affine_Standard_Library_Integration
+public import Growth
+import Ordinal_Standard_Library_Integration
 
 extension Buffer.Slab.Header.Static where S: ~Copyable {
 

@@ -1,6 +1,6 @@
-import Affine_Primitives_Standard_Library_Integration
-import Bit_Vector_Static_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
+import Affine_Standard_Library_Integration
+import Bit_Vector_Static
+import Ordinal_Standard_Library_Integration
 
 extension Buffer.Slab.Header where S: ~Copyable {
 

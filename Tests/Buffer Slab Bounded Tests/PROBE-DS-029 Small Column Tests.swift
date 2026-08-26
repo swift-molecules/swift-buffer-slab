@@ -1,9 +1,9 @@
-import Buffer_Slab_Primitives
-import Buffer_Slab_Primitives_Test_Support
+import Buffer_Slab
+import Buffer_Slab_Test_Support
 import Memory_Allocator_Primitive
-import Memory_Heap_Primitives
-import Memory_Small_Primitives
-import Storage_Contiguous_Primitives
+import Memory_Heap
+import Memory_Small
+import Storage_Contiguous
 import Testing
 
 @Suite

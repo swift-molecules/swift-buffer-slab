@@ -1,10 +1,10 @@
-import Affine_Primitives_Standard_Library_Integration
-public import Bit_Vector_Bounded_Primitives
-import Growth_Primitives
+import Affine_Standard_Library_Integration
+public import Bit_Vector_Bounded
+import Growth
 public import Memory_Allocator_Primitive
-public import Memory_Heap_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
-public import Storage_Contiguous_Primitives
+public import Memory_Heap
+import Ordinal_Standard_Library_Integration
+public import Storage_Contiguous
 
 extension Property.Borrow where Base: ~Copyable {
 

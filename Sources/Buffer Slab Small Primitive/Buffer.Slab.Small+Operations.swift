@@ -1,9 +1,9 @@
-import Affine_Primitives_Standard_Library_Integration
-public import Finite_Bounded_Primitives
+import Affine_Standard_Library_Integration
+public import Finite_Bounded
 public import Memory_Allocator_Primitive
-import Ordinal_Primitives_Standard_Library_Integration
-public import Storage_Contiguous_Primitives
-import Storage_Protocol_Primitives
+import Ordinal_Standard_Library_Integration
+public import Storage_Contiguous
+import Storage_Protocol
 
 extension Buffer.Slab.Small where S: ~Copyable {
 

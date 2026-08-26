@@ -1,6 +1,6 @@
-import Affine_Primitives_Standard_Library_Integration
-import Index_Primitives
-import Ordinal_Primitives_Standard_Library_Integration
+import Affine_Standard_Library_Integration
+import Index
+import Ordinal_Standard_Library_Integration
 
 extension Buffer.Slab.Inline where S: ~Copyable {
 

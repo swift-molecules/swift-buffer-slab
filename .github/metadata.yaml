@@ -1,7 +1,7 @@
 # .github/metadata.yaml
 description: "A sparse, bitmap-indexed slab buffer in growable, bounded, inline, and small-buffer variants, generic over noncopyable elements."
 topics:
-  - primitives
+  - molecules
   - buffer
   - slab
 homepage: "https://swift-institute.org"

@@ -1,4 +1,4 @@
-public import Buffer_Protocol_Primitives
+public import Buffer_Protocol
 
 extension Buffer.Slab.Small: Buffer.`Protocol` where S: ~Copyable {
 
