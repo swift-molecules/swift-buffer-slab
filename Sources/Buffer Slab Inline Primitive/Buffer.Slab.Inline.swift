@@ -2,8 +2,7 @@ import Affine_Standard_Library_Integration
 import Bit_Vector_Static
 import Index
 import Ordinal_Standard_Library_Integration
-public import Store_Initialization
-public import Store_Inline
+public import Storage
 
 extension Buffer.Slab where S: ~Copyable {
 
@@ -42,13 +41,13 @@ extension Buffer.Slab.Inline where S: ~Copyable {
         }
 
         deinit {
-            var slot: Bit.Index = .zero
-            let end = Bit.Index.Count(UInt(wordCount)).map(Ordinal.init)
+            var slot = Bit.Index(_unchecked: Ordinal(0))
+            let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
             while slot < end {
                 if header.bitmap[slot] {
                     _ = storage.move(at: slot.retag(S.Element.self))
                 }
-                slot += .one
+                slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
             }
         }
     }
@@ -56,14 +55,14 @@ extension Buffer.Slab.Inline where S: ~Copyable {
 
 extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
-    @usableFromInline var occupancy: Bit.Index.Count { header.occupancy }
+    @usableFromInline var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
     @usableFromInline var isEmpty: Bool { header.isEmpty }
     @usableFromInline
-    func isFull(capacity: Bit.Index.Count) -> Bool { header.occupancy >= capacity }
+    func isFull(capacity: Tagged<Bit, Cardinal>) -> Bool { header.occupancy >= capacity }
     @usableFromInline
     func isOccupied(at slot: Bit.Index) -> Bool { header.isOccupied(at: slot) }
     @usableFromInline
-    func firstVacant(max: Bit.Index.Count) -> Bit.Index? { header.firstVacant(max: max) }
+    func firstVacant(max: Tagged<Bit, Cardinal>) -> Bit.Index? { header.firstVacant(max: max) }
 
     @usableFromInline
     static func _preconditionReleaseSound(function: StaticString = #function) {
@@ -107,23 +106,23 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     @usableFromInline
     func removeAll() {
         Self._preconditionReleaseSound()
-        var slot: Bit.Index = .zero
-        let end = Bit.Index.Count(UInt(wordCount)).map(Ordinal.init)
+        var slot = Bit.Index(_unchecked: Ordinal(0))
+        let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
                 _ = storage.move(at: slot.retag(S.Element.self))
                 storage.initialization = .empty
                 header.bitmap[slot] = false
             }
-            slot += .one
+            slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
         }
     }
 
     @usableFromInline
     func drain(_ body: (consuming S.Element) -> Void) {
         Self._preconditionReleaseSound()
-        var slot: Bit.Index = .zero
-        let end = Bit.Index.Count(UInt(wordCount)).map(Ordinal.init)
+        var slot = Bit.Index(_unchecked: Ordinal(0))
+        let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
                 let element = storage.move(at: slot.retag(S.Element.self))
@@ -131,7 +130,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
                 header.bitmap[slot] = false
                 body(consume element)
             }
-            slot += .one
+            slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
         }
     }
 }
@@ -143,13 +142,13 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable, S.Element: Copyable {
     @usableFromInline
     func occupiedElements(max wordCount: Int) -> [S.Element] {
         var result: [S.Element] = []
-        var slot: Bit.Index = .zero
-        let end = Bit.Index.Count(UInt(wordCount)).map(Ordinal.init)
+        var slot = Bit.Index(_unchecked: Ordinal(0))
+        let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
                 result.append(storage[slot.retag(S.Element.self)])
             }
-            slot += .one
+            slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
         }
         return result
     }

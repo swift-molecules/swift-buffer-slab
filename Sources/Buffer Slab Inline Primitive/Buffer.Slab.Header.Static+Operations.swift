@@ -5,7 +5,7 @@ import Ordinal_Standard_Library_Integration
 extension Buffer.Slab.Header.Static where S: ~Copyable {
 
     @inlinable
-    public var occupancy: Bit.Index.Count {
+    public var occupancy: Tagged<Bit, Cardinal> {
         bitmap.popcount
     }
 
@@ -25,7 +25,7 @@ extension Buffer.Slab.Header.Static where S: ~Copyable {
     }
 
     @inlinable
-    public func firstVacant(max: Bit.Index.Count) -> Bit.Index? {
+    public func firstVacant(max: Tagged<Bit, Cardinal>) -> Bit.Index? {
         bitmap.zeros.first(max: max)
     }
 }

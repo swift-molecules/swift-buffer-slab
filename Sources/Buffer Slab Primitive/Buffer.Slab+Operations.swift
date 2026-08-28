@@ -1,16 +1,18 @@
 import Affine_Standard_Library_Integration
 public import Bit_Vector_Bounded
+public import Cardinal
 public import Memory_Allocator_Primitive
 public import Memory_Allocator_Protocol
 import Ordinal_Standard_Library_Integration
 import Sequence
-public import Storage_Contiguous
+public import Storage_Memory
+public import Tagged
 
 extension Buffer.Slab where S: ~Copyable {
 
     @inlinable
     public init<E: ~Copyable, Resource: Memory.Growable & ~Copyable>(
-        minimumCapacity: Index<E>.Count
+        minimumCapacity: Tagged<E, Cardinal>
     ) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
         let storage = S.create(minimumCapacity: minimumCapacity)
         self.init(
@@ -23,10 +25,10 @@ extension Buffer.Slab where S: ~Copyable {
 extension Buffer.Slab where S: ~Copyable {
 
     @inlinable
-    public var occupancy: Bit.Index.Count { header.occupancy }
+    public var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
 
     @inlinable
-    public var count: Index<Element>.Count { occupancy.retag(Element.self) }
+    public var count: Tagged<Element, Cardinal> { occupancy.retag(Element.self) }
 
     @inlinable
     public var isEmpty: Bool { header.isEmpty }

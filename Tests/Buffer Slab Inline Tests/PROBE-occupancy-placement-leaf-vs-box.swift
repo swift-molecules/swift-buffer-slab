@@ -1,16 +1,15 @@
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
-import Finite_Bounded
 import Index
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
-import Store_Initialization
-import Store_Inline
+import Memory_Small
+import Storage_Memory
+import Storage
+import Storage
 import Testing
 
 private typealias Bitmap4 =
-    Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header.Static<4>
+    Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header.Static<4>
 
 private func bitIndex(_ slot: Int) -> Bit.Index { Bit.Index(Ordinal(UInt(slot))) }
 private func idx4(_ slot: Int) -> Index<Int> { bitIndex(slot).retag(Int.self) }
@@ -43,8 +42,8 @@ private struct Counted: ~Copyable {
 struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
     @Test
     func `PC real box Inline4 insert@2 under -O`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<4>()
-        let s2: Bit.Index.Bounded<4> = 2
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
+        let s2: Bit.Index = 2
         buffer.insert(42, at: s2)
         let occ = buffer.occupancy
         let o2 = buffer.isOccupied(at: s2)
@@ -55,10 +54,10 @@ struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
 
     @Test
     func `PC real box Inline8 sparse 0-4-7 under -O (context)`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Inline<8>()
-        let s0: Bit.Index.Bounded<8> = 0
-        let s4: Bit.Index.Bounded<8> = 4
-        let s7: Bit.Index.Bounded<8> = 7
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>()
+        let s0: Bit.Index = 0
+        let s4: Bit.Index = 4
+        let s7: Bit.Index = 7
         buffer.insert(10, at: s0)
         buffer.insert(40, at: s4)
         buffer.insert(70, at: s7)
@@ -85,7 +84,7 @@ extension T1Box {
         storage.initialization = .empty
         header.bitmap[bitIndex(slot)] = true
     }
-    var occupancy: Bit.Index.Count { header.occupancy }
+    var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
     func isOccupied(at slot: Int) -> Bool { header.isOccupied(at: bitIndex(slot)) }
 }
 
@@ -105,7 +104,7 @@ extension T1Leaf {
         storage.initialization = .empty
         header.bitmap[bitIndex(slot)] = true
     }
-    var occupancy: Bit.Index.Count { header.occupancy }
+    var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
     func isOccupied(at slot: Int) -> Bool { header.isOccupied(at: bitIndex(slot)) }
 }
 
@@ -150,7 +149,7 @@ private final class T0Box<Element: ~Copyable> {
         unsafe (base + slot).initialize(to: element)
         header.bitmap[bitIndex(slot)] = true
     }
-    var occupancy: Bit.Index.Count { header.occupancy }
+    var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
     deinit {
         for slot in 0..<4 where header.isOccupied(at: bitIndex(slot)) {
             unsafe withUnsafePointer(to: _storage) { raw in
@@ -180,7 +179,7 @@ private struct T2Leaf<Element: ~Copyable>: ~Copyable {
         unsafe (base + slot).initialize(to: element)
         header.bitmap[bitIndex(slot)] = true
     }
-    var occupancy: Bit.Index.Count { header.occupancy }
+    var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
     func isOccupied(at slot: Int) -> Bool { header.isOccupied(at: bitIndex(slot)) }
     deinit {
         for slot in 0..<4 where header.isOccupied(at: bitIndex(slot)) {

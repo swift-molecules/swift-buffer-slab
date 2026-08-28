@@ -1,8 +1,8 @@
 import Buffer_Slab_Test_Support
 import Buffer_Slab_Small
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 import Testing
 
 @Suite
@@ -15,7 +15,7 @@ struct `Buffer.Slab.Small - Bounds Safety` {
     {
         if _isDebugAssertConfiguration() {
             await #expect(processExitsWith: .success) {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
                     .Small<4>()
                 buffer.insert(10, at: 0)
                 buffer.insert(99, at: 4)
@@ -33,7 +33,7 @@ struct `Buffer.Slab.Small - Bounds Safety` {
         } else {
 
             await #expect(processExitsWith: .failure) {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
                     .Small<4>()
                 buffer.insert(10, at: 0)
             }
@@ -43,7 +43,7 @@ struct `Buffer.Slab.Small - Bounds Safety` {
     @Test
     func `insert at slot equal to 2 times inlineCapacity sizes the heap spill to cover it`() async {
         await #expect(processExitsWith: .success) {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
                 4
             >()
 
@@ -57,7 +57,7 @@ struct `Buffer.Slab.Small - Bounds Safety` {
     @Test
     func `isOccupied at an out-of-inline-range slot reads vacant instead of trapping`() async {
         await #expect(processExitsWith: .success) {
-            let buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<
+            let buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
                 4
             >()
 
@@ -74,13 +74,13 @@ struct `Buffer.Slab.Small - Bounds Safety` {
         async
     {
         await #expect(processExitsWith: .failure) {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
                 4
             >()
             _ = buffer.remove(at: 4)
         }
         await #expect(processExitsWith: .failure) {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
                 4
             >()
             _ = buffer.update(at: 4, with: 1)

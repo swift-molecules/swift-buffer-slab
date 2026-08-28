@@ -2,13 +2,12 @@ import Affine_Standard_Library_Integration
 public import Bit_Vector_Bounded
 import Growth
 import Ordinal_Standard_Library_Integration
-import Storage_Protocol
-public import Store_Protocol
+public import Storage
 
 extension Buffer.Slab where S: ~Copyable {
 
     @inlinable
-    public var capacity: Bit.Index.Count {
+    public var capacity: Tagged<Bit, Cardinal> {
         header.bitmap.capacity.maximum
     }
 }

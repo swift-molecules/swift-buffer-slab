@@ -1,11 +1,13 @@
 import Affine_Standard_Library_Integration
 public import Bit_Vector_Bounded
+public import Cardinal
 import Index
 public import Memory_Allocator_Primitive
 public import Memory_Allocator_Protocol
 import Ordinal_Standard_Library_Integration
-public import Storage_Contiguous
-public import Store_Protocol
+public import Storage_Memory
+public import Storage
+public import Tagged
 
 extension Buffer.Slab.Bounded where S: ~Copyable, S.Element: Copyable {
 
@@ -40,7 +42,7 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
         capacity: UInt
     ) throws(Self.Error) where S == Storage<Memory.Allocator<Resource>>.Contiguous<E> {
         guard elements.count <= Int(capacity) else { throw .capacityExceeded }
-        var buffer = Self(minimumCapacity: Index<E>.Count(Cardinal(capacity)))
+        var buffer = Self(minimumCapacity: Tagged<E, Cardinal>(_unchecked: Cardinal(capacity)))
         for (i, element) in elements.enumerated() {
             buffer.insert(element, at: Bit.Index(Ordinal(UInt(i))))
         }

@@ -2,8 +2,7 @@ import Affine_Standard_Library_Integration
 import Bit_Vector_Bounded
 import Index
 import Ordinal_Standard_Library_Integration
-import Storage_Protocol
-import Store_Protocol
+import Storage
 
 extension Buffer.Slab where S: ~Copyable {
 

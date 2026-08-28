@@ -1,9 +1,8 @@
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
-import Finite_Bounded
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 import Testing
 
 @Suite(
@@ -30,11 +29,11 @@ struct `Buffer.Slab.Inline - Deinit` {
 
     private struct _BareWrapper<Element: ~Copyable, let wordCount: Int>: ~Copyable {
         var _buffer:
-            Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab.Inline<
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Element>>.Slab.Inline<
                 wordCount
             >
         init() {
-            self._buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Element>>.Slab
+            self._buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Element>>.Slab
                 .Inline()
         }
         deinit {}
@@ -45,9 +44,9 @@ struct `Buffer.Slab.Inline - Deinit` {
         let tracker = Tracker()
         do {
             var bare = _BareWrapper<TrackedElement, 4>()
-            let s0: Bit.Index.Bounded<4> = 0
-            let s1: Bit.Index.Bounded<4> = 1
-            let s2: Bit.Index.Bounded<4> = 2
+            let s0: Bit.Index = 0
+            let s1: Bit.Index = 1
+            let s2: Bit.Index = 2
             bare._buffer.insert(TrackedElement(1, tracker: tracker), at: s0)
             bare._buffer.insert(TrackedElement(2, tracker: tracker), at: s1)
             bare._buffer.insert(TrackedElement(3, tracker: tracker), at: s2)
@@ -88,12 +87,12 @@ struct `Buffer.Slab.Inline - Single-Free` {
         let ledger = Ledger()
         let n = 6
         do {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Counted>>.Slab
                 .Inline<8>()
             (0..<n).forEach { i in
                 buffer.insert(
                     Counted(i, ledger),
-                    at: Bit.Index.Bounded<8>(Bit.Index(Ordinal(UInt(i))))!
+                    at: Bit.Index(Ordinal(UInt(i)))
                 )
             }
         }
@@ -106,11 +105,11 @@ struct `Buffer.Slab.Inline - Single-Free` {
     func `sparse inline teardown frees only occupied slots, once each`() {
         let ledger = Ledger()
         do {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Counted>>.Slab
                 .Inline<8>()
-            let s0: Bit.Index.Bounded<8> = 0
-            let s4: Bit.Index.Bounded<8> = 4
-            let s7: Bit.Index.Bounded<8> = 7
+            let s0: Bit.Index = 0
+            let s4: Bit.Index = 4
+            let s7: Bit.Index = 7
             buffer.insert(Counted(1, ledger), at: s0)
             buffer.insert(Counted(2, ledger), at: s4)
             buffer.insert(Counted(3, ledger), at: s7)
@@ -123,10 +122,10 @@ struct `Buffer.Slab.Inline - Single-Free` {
     func `remove then teardown never double-frees a removed slot`() {
         let ledger = Ledger()
         do {
-            var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Counted>>.Slab
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Counted>>.Slab
                 .Inline<8>()
-            let s0: Bit.Index.Bounded<8> = 0
-            let s1: Bit.Index.Bounded<8> = 1
+            let s0: Bit.Index = 0
+            let s1: Bit.Index = 1
             buffer.insert(Counted(1, ledger), at: s0)
             buffer.insert(Counted(2, ledger), at: s1)
             _ = buffer.remove(at: s0)
@@ -149,7 +148,7 @@ extension `Buffer.Slab.Inline - Single-Free`.Ledger {
 struct `Buffer.Slab.Header.Static - Release Isolation` {
     @Test
     func `local Header.Static bitmap set persists`() {
-        var h = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Header.Static<
+        var h = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header.Static<
             8
         >()
         let s2: Bit.Index = Bit.Index(Ordinal(2 as UInt))

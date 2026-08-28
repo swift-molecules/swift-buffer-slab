@@ -3,4 +3,4 @@
 @_exported public import Index
 @_exported public import Memory_Inline
 @_exported public import Memory
-@_exported public import Store_Initialization
+@_exported public import Storage

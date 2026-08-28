@@ -1,8 +1,8 @@
 import Buffer_Slab
 import Buffer_Slab_Test_Support
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 import Testing
 
 @Suite
@@ -10,7 +10,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `init creates empty growable slab`() {
-        let buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        let buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         #expect(buffer.isEmpty == true)
@@ -20,7 +20,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `insert and remove at specific slots`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         let slot: Bit.Index = 3
@@ -34,7 +34,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `sparse occupancy — non-contiguous slots`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -46,7 +46,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `firstVacant returns correct slot`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 4
         )
         buffer.insert(10, at: 0)
@@ -58,7 +58,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `slot reuse after removal`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 4
         )
         let slot: Bit.Index = 1
@@ -70,7 +70,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `multiple insert and remove`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -89,7 +89,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `update replaces element`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -101,7 +101,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `drain removes all elements`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -116,7 +116,7 @@ struct `Buffer.Slab` {
 
     @Test
     func `removeAll clears buffer`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -130,8 +130,8 @@ struct `Buffer.Slab` {
 
     @Test
     func `deinit cleans up occupied slots`() {
-        var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab? = Buffer<
-            Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>
+        var buffer: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab? = Buffer<
+            Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>
         >.Slab(minimumCapacity: 4)
         buffer!.insert(10, at: 0)
         buffer!.insert(20, at: 2)

@@ -1,8 +1,8 @@
 import Buffer_Slab
 import Buffer_Slab_Test_Support
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 import Testing
 
 @Suite
@@ -10,7 +10,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `clone preserves the occupied slots`() {
-        var original = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var original = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         original.insert(10, at: 0)
@@ -28,7 +28,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `clone yields an independent copy`() {
-        var original = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var original = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         original.insert(10, at: 0)
@@ -52,7 +52,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `clone of an empty slab is empty`() {
-        let original = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        let original = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 4
         )
         let copy = original.clone()
@@ -63,7 +63,7 @@ struct `Buffer.Slab Clone & Teardown` {
     @Test
     func `original and clone each free exactly once`() {
 
-        var original = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var original = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 4
         )
         original.insert(10, at: 0)
@@ -78,7 +78,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `Bounded clone preserves the occupied slots`() {
-        var original = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var original = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
             minimumCapacity: 8
         )
         original.insert(10, at: 0)
@@ -93,7 +93,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `bitmap stays synced after insert-remove cycle`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -109,7 +109,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `bitmap stays synced after removeAll`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -122,7 +122,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `bitmap stays synced after drain`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -134,7 +134,7 @@ struct `Buffer.Slab Clone & Teardown` {
 
     @Test
     func `update preserves the new value`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)

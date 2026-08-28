@@ -1,11 +1,18 @@
 import Affine_Standard_Library_Integration
-public import Finite_Bounded
+public import Cardinal
 public import Memory_Allocator_Primitive
+public import Memory_Small
 import Ordinal_Standard_Library_Integration
-public import Storage_Contiguous
-import Storage_Protocol
+public import Storage_Memory
+import Storage
+public import Tagged
 
 extension Buffer.Slab.Small where S: ~Copyable {
+
+    @usableFromInline
+    static var _inlineSlotLimit: Bit.Index {
+        Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(inlineCapacity))).map(Ordinal.init)
+    }
 
     @inlinable
     public init() {
@@ -23,7 +30,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public var occupancy: Bit.Index.Count {
+    public var occupancy: Tagged<Bit, Cardinal> {
         switch _storage {
         case .heap(let buf): return buf.occupancy
         case .inline(let buf): return buf.occupancy
@@ -31,7 +38,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public var count: Index<Element>.Count { occupancy.retag(Element.self) }
+    public var count: Tagged<Element, Cardinal> { occupancy.retag(Element.self) }
 
     @inlinable
     public var isEmpty: Bool {
@@ -56,10 +63,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
         case .heap(let buf): return buf.isOccupied(at: slot)
 
         case .inline(let buf):
-            guard let bounded = Bit.Index.Bounded<inlineCapacity>(slot) else {
-                return false
-            }
-            return buf.isOccupied(at: bounded)
+            return slot < Self._inlineSlotLimit && buf.isOccupied(at: slot)
         }
     }
 
@@ -67,21 +71,21 @@ extension Buffer.Slab.Small where S: ~Copyable {
     public func firstVacant() -> Bit.Index? {
         switch _storage {
         case .heap(let buf): return buf.firstVacant()
-        case .inline(let buf): return buf.firstVacant().map { Bit.Index($0) }
+        case .inline(let buf): return buf.firstVacant()
         }
     }
 
     @inlinable
     public mutating func insert<E>(_ element: consuming E, at slot: Bit.Index)
-    where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
+    where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
         switch _storage {
         case .heap(var buf):
             buf.insert(consume element, at: slot)
             self = Self(_storage: .heap(consume buf))
 
         case .inline(var buf):
-            if !buf.isFull, let bounded = Bit.Index.Bounded<inlineCapacity>(slot) {
-                buf.insert(consume element, at: bounded)
+            if !buf.isFull, slot < Self._inlineSlotLimit {
+                buf.insert(consume element, at: slot)
                 self = Self(_storage: .inline(consume buf))
             } else {
                 self = Self(_storage: .inline(consume buf))
@@ -104,10 +108,8 @@ extension Buffer.Slab.Small where S: ~Copyable {
             return element
 
         case .inline(var buf):
-            guard let bounded = Bit.Index.Bounded<inlineCapacity>(slot) else {
-                preconditionFailure("slot exceeds inlineCapacity — never occupiable in inline mode")
-            }
-            let element = buf.remove(at: bounded)
+            precondition(slot < Self._inlineSlotLimit, "slot exceeds inlineCapacity")
+            let element = buf.remove(at: slot)
             self = Self(_storage: .inline(consume buf))
             return element
         }
@@ -123,10 +125,8 @@ extension Buffer.Slab.Small where S: ~Copyable {
             return old
 
         case .inline(var buf):
-            guard let bounded = Bit.Index.Bounded<inlineCapacity>(slot) else {
-                preconditionFailure("slot exceeds inlineCapacity — never occupiable in inline mode")
-            }
-            let old = buf.update(at: bounded, with: consume element)
+            precondition(slot < Self._inlineSlotLimit, "slot exceeds inlineCapacity")
+            let old = buf.update(at: slot, with: consume element)
             self = Self(_storage: .inline(consume buf))
             return old
         }
@@ -148,7 +148,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
 
     @usableFromInline
     mutating func _spillToHeapMoving<E>(coveringAtLeast slot: Bit.Index)
-    where S == Storage<Memory.Allocator<Memory.Heap>>.Contiguous<E> {
+    where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
         switch _storage {
         case .heap(let buf):
             self = Self(_storage: .heap(consume buf))
@@ -156,19 +156,20 @@ extension Buffer.Slab.Small where S: ~Copyable {
 
         case .inline(var buf):
             let requiredForSlot = Int(slot.underlying.rawValue + 1)
-            let newCapacity = Index<E>.Count(UInt(Swift.max(requiredForSlot, inlineCapacity * 2)))
+            let newCapacity = Tagged<E, Cardinal>(
+                _unchecked: Cardinal(UInt(Swift.max(requiredForSlot, inlineCapacity * 2)))
+            )
             var heap = Buffer.Slab(minimumCapacity: newCapacity)
 
-            var slot: Bit.Index = .zero
-            let end = Bit.Index.Count(UInt(inlineCapacity)).map(Ordinal.init)
+            var slot = Bit.Index(_unchecked: Ordinal(0))
+            let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(inlineCapacity))).map(
+                Ordinal.init
+            )
             while slot < end {
-                guard let bounded = Bit.Index.Bounded<inlineCapacity>(slot) else {
-                    preconditionFailure("slot exceeds inlineCapacity")
+                if buf.isOccupied(at: slot) {
+                    heap.insert(buf.remove(at: slot), at: slot)
                 }
-                if buf.isOccupied(at: bounded) {
-                    heap.insert(buf.remove(at: bounded), at: slot)
-                }
-                slot += .one
+                slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
             }
 
             self = Self(_storage: .heap(consume heap))

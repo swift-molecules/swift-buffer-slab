@@ -10,7 +10,7 @@ extension Buffer.Slab where S: ~Copyable {
         public var bitmap: Bit.Vector.Bounded
 
         @inlinable
-        public init(capacity: Bit.Index.Count) {
+        public init(capacity: Tagged<Bit, Cardinal>) {
             do throws(Bit.Vector.Bounded.Error) {
                 self.bitmap = try Bit.Vector.Bounded(capacity: capacity, count: capacity)
             } catch {
@@ -25,7 +25,7 @@ extension Buffer.Slab where S: ~Copyable {
 extension Buffer.Slab.Header where S: ~Copyable {
 
     @inlinable
-    public var occupancy: Bit.Index.Count {
+    public var occupancy: Tagged<Bit, Cardinal> {
         bitmap.popcount
     }
 
@@ -45,7 +45,7 @@ extension Buffer.Slab.Header where S: ~Copyable {
     }
 
     @inlinable
-    public func firstVacant(max: Bit.Index.Count) -> Bit.Index? {
+    public func firstVacant(max: Tagged<Bit, Cardinal>) -> Bit.Index? {
         bitmap.zeros.first(max: max)
     }
 }

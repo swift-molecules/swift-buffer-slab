@@ -4,7 +4,7 @@ import Index
 public import Memory_Allocator_Primitive
 public import Memory_Allocator_Protocol
 import Ordinal_Standard_Library_Integration
-public import Storage_Contiguous
+public import Storage_Memory
 
 extension Buffer.Slab where S: ~Copyable {
 

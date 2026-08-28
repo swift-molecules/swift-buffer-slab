@@ -13,11 +13,11 @@ A slab tracks occupancy with a bitmap, so each element keeps a *stable slot inde
 ```swift
 import Buffer_Slab
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 
 // A growable, heap-backed slab of `Int`. Slots are stable addresses, not positions.
-typealias IntSlab = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+typealias IntSlab = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
 
 var slab = IntSlab(minimumCapacity: 8)
 slab.insert(42, at: 3)
@@ -32,11 +32,11 @@ print(slab.isOccupied(at: 5))    // true
 ```swift
 import Buffer_Slab
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 
 // Small-buffer optimization: inline storage until it overflows, then a heap spill.
-var small = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Small<2>()
+var small = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<2>()
 small.insert(10, at: 0)
 small.insert(20, at: 1)          // inline arm now full (capacity 2)
 print(small.isSpilled)           // false — still inline

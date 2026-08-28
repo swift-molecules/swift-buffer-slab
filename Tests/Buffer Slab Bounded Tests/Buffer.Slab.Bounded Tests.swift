@@ -1,8 +1,8 @@
 import Buffer_Slab
 import Buffer_Slab_Test_Support
 import Memory_Allocator_Primitive
-import Memory_Heap
-import Storage_Contiguous
+import Memory_Small
+import Storage_Memory
 import Testing
 
 @Suite
@@ -10,7 +10,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `insert and remove at specific slots`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
             minimumCapacity: 8
         )
         let slot: Bit.Index = 3
@@ -26,7 +26,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `sparse occupancy — non-contiguous slots`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
             minimumCapacity: 8
         )
         buffer.insert(10, at: 0)
@@ -42,7 +42,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `slot reuse after removal`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
             minimumCapacity: 4
         )
         let slot: Bit.Index = 1
@@ -54,7 +54,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `firstVacant finds available slot`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
             minimumCapacity: 4
         )
         buffer.insert(10, at: 0)
@@ -66,7 +66,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `drain removes all elements`() throws {
-        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
             .Bounded([10, 20, 30], capacity: 8)
         var drained: [Int] = []
         buffer.drain { drained.append($0) }
@@ -76,7 +76,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `removeAll clears buffer`() throws {
-        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab
+        var buffer = try Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
             .Bounded([1, 2, 3], capacity: 8)
         buffer.removeAll()
         #expect(buffer.isEmpty == true)
@@ -85,7 +85,7 @@ struct `Buffer.Slab.Bounded` {
 
     @Test
     func `peek reads without removing (Copyable)`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
             minimumCapacity: 8
         )
         let slot: Bit.Index = 5
@@ -97,8 +97,8 @@ struct `Buffer.Slab.Bounded` {
     @Test
     func `deinit cleans up occupied slots`() {
 
-        var buffer: Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded? =
-            Buffer<Storage<Memory.Allocator<Memory.Heap>>.Contiguous<Int>>.Slab.Bounded(
+        var buffer: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded? =
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Bounded(
                 minimumCapacity: 4
             )
         buffer!.insert(10, at: 0)

@@ -1,8 +1,11 @@
 import Affine_Standard_Library_Integration
-public import Finite_Bounded
-public import Iterator_Chunk
-public import Iterator_Primitive
+public import Iterator
 import Ordinal_Standard_Library_Integration
+
+public typealias BufferSlabMaterializingIterator<
+    Source: Iterating & ~Copyable & ~Escapable
+> = Iterator.Materializing<Source>
+where Source.Element: Copyable & Escapable
 
 extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
 
@@ -11,9 +14,7 @@ extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
         guard elements.count <= wordCount else { throw .capacityExceeded }
         var buffer = Self()
         for (i, element) in elements.enumerated() {
-            guard let slot = Bit.Index.Bounded<wordCount>(Bit.Index(Ordinal(UInt(i)))) else {
-                preconditionFailure("element index exceeds wordCount")
-            }
+            let slot = Bit.Index(Ordinal(UInt(i)))
             buffer.insert(element, at: slot)
         }
         self = buffer
@@ -22,7 +23,7 @@ extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
 
 extension Buffer.Slab.Inline: Iterable where S: ~Copyable, S.Element: Copyable {
 
-    public struct Iterator: Iterator_Primitive.Iterator.`Protocol`, IteratorProtocol,
+    public struct Iterator: Iterating, IteratorProtocol,
         @unchecked Sendable
     {
 
@@ -44,13 +45,13 @@ extension Buffer.Slab.Inline: Iterable where S: ~Copyable, S.Element: Copyable {
     }
 
     @_implements(Iterable,Iterator)
-    public typealias IterableIterator = Iterator_Primitive.Iterator.Materializing<Iterator>
+    public typealias IterableIterator = BufferSlabMaterializingIterator<Iterator>
 
     @_implements(Iterable,makeIterator())
     public borrowing func iterableMakeIterator()
-        -> Iterator_Primitive.Iterator.Materializing<Iterator>
+        -> BufferSlabMaterializingIterator<Iterator>
     {
-        Iterator_Primitive.Iterator.Materializing(Iterator(elements: _occupiedElements()))
+        BufferSlabMaterializingIterator(Iterator(elements: _occupiedElements()))
     }
 }
 

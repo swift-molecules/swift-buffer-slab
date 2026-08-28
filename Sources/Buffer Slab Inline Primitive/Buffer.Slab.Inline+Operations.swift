@@ -1,9 +1,15 @@
 import Affine_Standard_Library_Integration
-public import Finite_Bounded
+public import Cardinal
 import Ordinal_Standard_Library_Integration
-public import Store_Inline
+public import Storage
+public import Tagged
 
 extension Buffer.Slab.Inline where S: ~Copyable {
+
+    @usableFromInline
+    static var _slotLimit: Bit.Index {
+        Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
+    }
 
     @inlinable
     public init() {
@@ -14,51 +20,58 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     }
 
     @inlinable
-    public var occupancy: Bit.Index.Count { box.occupancy }
+    public var occupancy: Tagged<Bit, Cardinal> { box.occupancy }
 
     @inlinable
-    public var count: Index<Element>.Count { box.occupancy.retag(Element.self) }
+    public var count: Tagged<Element, Cardinal> { box.occupancy.retag(Element.self) }
 
     @inlinable
     public var isEmpty: Bool { box.isEmpty }
 
     @inlinable
-    public var isFull: Bool { box.isFull(capacity: Bit.Index.Count(UInt(wordCount))) }
+    public var isFull: Bool {
+        box.isFull(capacity: Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))))
+    }
 
     @inlinable
-    public func isOccupied(at slot: Bit.Index.Bounded<wordCount>) -> Bool {
-        box.isOccupied(at: Bit.Index(slot))
+    public func isOccupied(at slot: Bit.Index) -> Bool {
+        guard slot < Self._slotLimit else { return false }
+        return box.isOccupied(at: slot)
     }
 
     @inlinable
     public mutating func insert(
         _ element: consuming S.Element,
-        at slot: Bit.Index.Bounded<wordCount>
+        at slot: Bit.Index
     ) {
-        box.insert(consume element, at: Bit.Index(slot))
+        precondition(slot < Self._slotLimit, "slot exceeds wordCount")
+        box.insert(consume element, at: slot)
     }
 
     @inlinable
-    public mutating func remove(at slot: Bit.Index.Bounded<wordCount>) -> S.Element {
-        box.remove(at: Bit.Index(slot))
+    public mutating func remove(at slot: Bit.Index) -> S.Element {
+        precondition(slot < Self._slotLimit, "slot exceeds wordCount")
+        return box.remove(at: slot)
     }
 
     @inlinable
     public mutating func update(
-        at slot: Bit.Index.Bounded<wordCount>,
+        at slot: Bit.Index,
         with element: consuming S.Element
     ) -> S.Element {
-        box.update(at: Bit.Index(slot), with: consume element)
+        precondition(slot < Self._slotLimit, "slot exceeds wordCount")
+        return box.update(at: slot, with: consume element)
     }
 
     @inlinable
-    public func firstVacant() -> Bit.Index.Bounded<wordCount>? {
-        guard let slot = box.firstVacant(max: Bit.Index.Count(UInt(wordCount))) else { return nil }
+    public func firstVacant() -> Bit.Index? {
+        guard
+            let slot = box.firstVacant(
+                max: Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount)))
+            )
+        else { return nil }
 
-        guard let bounded = Bit.Index.Bounded<wordCount>(slot) else {
-            preconditionFailure("box.firstVacant returned a slot outside wordCount")
-        }
-        return bounded
+        return slot
     }
 
     @inlinable
@@ -70,13 +83,9 @@ extension Buffer.Slab.Inline where S: ~Copyable {
 extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
 
     @inlinable
-    public func peek(at slot: Bit.Index.Bounded<wordCount>) -> S.Element {
-        box.peek(at: Bit.Index(slot))
-    }
-
-    @inlinable
-    package func peek(at slot: Bit.Index) -> S.Element {
-        box.peek(at: slot)
+    public func peek(at slot: Bit.Index) -> S.Element {
+        precondition(slot < Self._slotLimit, "slot exceeds wordCount")
+        return box.peek(at: slot)
     }
 }
 
@@ -85,25 +94,6 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     @inlinable
     package func _occupiedElements() -> [S.Element] where S.Element: Copyable {
         box.occupiedElements(max: wordCount)
-    }
-}
-
-extension Buffer.Slab.Inline where S: ~Copyable {
-
-    @inlinable
-    package mutating func insert(_ element: consuming S.Element, at slot: Bit.Index) {
-        box.insert(consume element, at: slot)
-    }
-
-    @inlinable
-    package mutating func remove(at slot: Bit.Index) -> S.Element {
-        box.remove(at: slot)
-    }
-
-    @inlinable
-    package mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
-    {
-        box.update(at: slot, with: consume element)
     }
 }
 
