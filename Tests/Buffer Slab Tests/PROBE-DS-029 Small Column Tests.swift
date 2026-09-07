@@ -2,7 +2,6 @@ import Buffer_Slab
 import Buffer_Slab_Test_Support
 import Memory_Allocator_Primitive
 import Memory_Small
-import Memory_Small
 import Storage_Memory
 import Testing
 
