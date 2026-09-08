@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -16,7 +17,7 @@ struct `Buffer.Slab.Inline` {
     @Test
     func `insert and remove at specific slots`() throws {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let slot: Bit.Index = 2
+        let slot: Index::Index<Bit::Bit> = 2
         buffer.insert(42, at: slot)
         #expect(buffer.isOccupied(at: slot) == true)
         #expect(buffer.occupancy == 1)
@@ -30,9 +31,9 @@ struct `Buffer.Slab.Inline` {
     @Test
     func `sparse occupancy — non-contiguous slots`() throws {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let s0: Bit.Index = 0
-        let s2: Bit.Index = 2
-        let s3: Bit.Index = 3
+        let s0: Index::Index<Bit::Bit> = 0
+        let s2: Index::Index<Bit::Bit> = 2
+        let s3: Index::Index<Bit::Bit> = 3
         buffer.insert(10, at: s0)
         buffer.insert(20, at: s2)
         buffer.insert(30, at: s3)
@@ -47,7 +48,7 @@ struct `Buffer.Slab.Inline` {
     @Test
     func `slot reuse after removal`() throws {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let slot: Bit.Index = 1
+        let slot: Index::Index<Bit::Bit> = 1
         buffer.insert(10, at: slot)
         _ = buffer.remove(at: slot)
         buffer.insert(20, at: slot)
@@ -57,8 +58,8 @@ struct `Buffer.Slab.Inline` {
     @Test
     func `firstVacant finds available slot`() throws {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let s0: Bit.Index = 0
-        let s1: Bit.Index = 1
+        let s0: Index::Index<Bit::Bit> = 0
+        let s1: Index::Index<Bit::Bit> = 1
         buffer.insert(10, at: s0)
         buffer.insert(20, at: s1)
 
@@ -69,10 +70,10 @@ struct `Buffer.Slab.Inline` {
     @Test
     func `firstVacant returns nil when full`() throws {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let s0: Bit.Index = 0
-        let s1: Bit.Index = 1
-        let s2: Bit.Index = 2
-        let s3: Bit.Index = 3
+        let s0: Index::Index<Bit::Bit> = 0
+        let s1: Index::Index<Bit::Bit> = 1
+        let s2: Index::Index<Bit::Bit> = 2
+        let s3: Index::Index<Bit::Bit> = 3
         buffer.insert(10, at: s0)
         buffer.insert(20, at: s1)
         buffer.insert(30, at: s2)
@@ -107,7 +108,7 @@ struct `Buffer.Slab.Inline` {
     @Test
     func `peek reads without removing (Copyable)`() throws {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>()
-        let slot: Bit.Index = 3
+        let slot: Index::Index<Bit::Bit> = 3
         buffer.insert(42, at: slot)
         #expect(buffer.peek(at: slot) == 42)
         #expect(buffer.isOccupied(at: slot) == true)

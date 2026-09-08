@@ -1,8 +1,9 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Cardinal
-public import Memory_Allocator_Primitive
+public import Memory_Allocator
 public import Memory_Small
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage_Memory
 import Storage
 public import Tagged
@@ -10,7 +11,7 @@ public import Tagged
 extension Buffer.Slab.Small where S: ~Copyable {
 
     @usableFromInline
-    static var _inlineSlotLimit: Bit.Index {
+    static var _inlineSlotLimit: Index::Index<Bit::Bit> {
         Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(inlineCapacity))).map(Ordinal.init)
     }
 
@@ -57,7 +58,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public func isOccupied(at slot: Bit.Index) -> Bool {
+    public func isOccupied(at slot: Index::Index<Bit::Bit>) -> Bool {
         switch _storage {
 
         case .heap(let buf): return buf.isOccupied(at: slot)
@@ -68,7 +69,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public func firstVacant() -> Bit.Index? {
+    public func firstVacant() -> Index::Index<Bit::Bit>? {
         switch _storage {
         case .heap(let buf): return buf.firstVacant()
         case .inline(let buf): return buf.firstVacant()
@@ -76,7 +77,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public mutating func insert<E>(_ element: consuming E, at slot: Bit.Index)
+    public mutating func insert<E>(_ element: consuming E, at slot: Index::Index<Bit::Bit>)
     where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
         switch _storage {
         case .heap(var buf):
@@ -100,7 +101,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public mutating func remove(at slot: Bit.Index) -> S.Element {
+    public mutating func remove(at slot: Index::Index<Bit::Bit>) -> S.Element {
         switch _storage {
         case .heap(var buf):
             let element = buf.remove(at: slot)
@@ -116,7 +117,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
+    public mutating func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element
     {
         switch _storage {
         case .heap(var buf):
@@ -147,7 +148,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @usableFromInline
-    mutating func _spillToHeapMoving<E>(coveringAtLeast slot: Bit.Index)
+    mutating func _spillToHeapMoving<E>(coveringAtLeast slot: Index::Index<Bit::Bit>)
     where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
         switch _storage {
         case .heap(let buf):
@@ -161,7 +162,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
             )
             var heap = Buffer.Slab(minimumCapacity: newCapacity)
 
-            var slot = Bit.Index(_unchecked: Ordinal(0))
+            var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
             let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(inlineCapacity))).map(
                 Ordinal.init
             )
@@ -169,7 +170,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
                 if buf.isOccupied(at: slot) {
                     heap.insert(buf.remove(at: slot), at: slot)
                 }
-                slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
+                slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
             }
 
             self = Self(_storage: .heap(consume heap))

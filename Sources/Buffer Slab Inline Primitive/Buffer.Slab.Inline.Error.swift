@@ -1,6 +1,6 @@
-import Affine_Standard_Library_Integration
+import Affine
 import Index
-import Ordinal_Standard_Library_Integration
+import Ordinal
 
 extension Buffer.Slab.Inline where S: ~Copyable {
 

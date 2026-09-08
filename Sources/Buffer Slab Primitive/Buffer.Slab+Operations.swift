@@ -1,9 +1,10 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Bit_Vector_Bounded
 public import Cardinal
-public import Memory_Allocator_Primitive
+public import Memory_Allocator
 public import Memory_Allocator_Protocol
-import Ordinal_Standard_Library_Integration
+import Ordinal
 import Sequence
 public import Storage_Memory
 public import Tagged
@@ -37,7 +38,7 @@ extension Buffer.Slab where S: ~Copyable {
     public var isFull: Bool { header.isFull }
 
     @inlinable
-    public func isOccupied(at slot: Bit.Index) -> Bool {
+    public func isOccupied(at slot: Index::Index<Bit::Bit>) -> Bool {
         header.isOccupied(at: slot)
     }
 
@@ -47,24 +48,24 @@ extension Buffer.Slab where S: ~Copyable {
     }
 
     @inlinable
-    public mutating func insert(_ element: consuming S.Element, at slot: Bit.Index) {
+    public mutating func insert(_ element: consuming S.Element, at slot: Index::Index<Bit::Bit>) {
 
         Self.insert(consume element, at: slot, header: &box.header, storage: &box.storage)
     }
 
     @inlinable
-    public mutating func remove(at slot: Bit.Index) -> S.Element {
+    public mutating func remove(at slot: Index::Index<Bit::Bit>) -> S.Element {
         Self.remove(at: slot, header: &box.header, storage: &box.storage)
     }
 
     @inlinable
-    public mutating func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element
+    public mutating func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element
     {
         Self.update(at: slot, with: consume element, storage: &box.storage)
     }
 
     @inlinable
-    public func firstVacant() -> Bit.Index? {
+    public func firstVacant() -> Index::Index<Bit::Bit>? {
         Self.firstVacant(header: header)
     }
 

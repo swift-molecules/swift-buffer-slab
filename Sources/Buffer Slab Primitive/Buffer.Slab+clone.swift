@@ -1,9 +1,9 @@
-import Affine_Standard_Library_Integration
+import Affine
 public import Bit_Vector_Bounded
 import Index
-public import Memory_Allocator_Primitive
+public import Memory_Allocator
 public import Memory_Allocator_Protocol
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage_Memory
 
 extension Buffer.Slab where S: ~Copyable {

@@ -1,6 +1,7 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Iterator
-import Ordinal_Standard_Library_Integration
+import Ordinal
 
 public typealias BufferSlabMaterializingIterator<
     Source: Iterating & ~Copyable & ~Escapable
@@ -14,7 +15,7 @@ extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
         guard elements.count <= wordCount else { throw .capacityExceeded }
         var buffer = Self()
         for (i, element) in elements.enumerated() {
-            let slot = Bit.Index(Ordinal(UInt(i)))
+            let slot = Index::Index<Bit::Bit>(Ordinal(UInt(i)))
             buffer.insert(element, at: slot)
         }
         self = buffer

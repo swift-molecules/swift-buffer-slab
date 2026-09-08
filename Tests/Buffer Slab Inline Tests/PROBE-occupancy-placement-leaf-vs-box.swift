@@ -1,7 +1,7 @@
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
 import Index
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Storage
@@ -10,7 +10,7 @@ import Testing
 private typealias Bitmap4 =
     Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header.Static<4>
 
-private func bitIndex(_ slot: Int) -> Bit.Index { Bit.Index(Ordinal(UInt(slot))) }
+private func bitIndex(_ slot: Int) -> Index::Index<Bit::Bit> { Index::Index<Bit::Bit>(Ordinal(UInt(slot))) }
 private func idx4(_ slot: Int) -> Index<Int> { bitIndex(slot).retag(Int.self) }
 
 private final class Ledger: @unchecked Sendable {
@@ -42,7 +42,7 @@ struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
     @Test
     func `PC real box Inline4 insert@2 under -O`() {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let s2: Bit.Index = 2
+        let s2: Index::Index<Bit::Bit> = 2
         buffer.insert(42, at: s2)
         let occ = buffer.occupancy
         let o2 = buffer.isOccupied(at: s2)
@@ -54,9 +54,9 @@ struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
     @Test
     func `PC real box Inline8 sparse 0-4-7 under -O (context)`() {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>()
-        let s0: Bit.Index = 0
-        let s4: Bit.Index = 4
-        let s7: Bit.Index = 7
+        let s0: Index::Index<Bit::Bit> = 0
+        let s4: Index::Index<Bit::Bit> = 4
+        let s7: Index::Index<Bit::Bit> = 7
         buffer.insert(10, at: s0)
         buffer.insert(40, at: s4)
         buffer.insert(70, at: s7)

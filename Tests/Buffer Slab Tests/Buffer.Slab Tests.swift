@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -23,7 +24,7 @@ struct `Buffer.Slab` {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 8
         )
-        let slot: Bit.Index = 3
+        let slot: Index::Index<Bit::Bit> = 3
         buffer.insert(42, at: slot)
         #expect(buffer.occupancy == 1)
 
@@ -61,7 +62,7 @@ struct `Buffer.Slab` {
         var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
             minimumCapacity: 4
         )
-        let slot: Bit.Index = 1
+        let slot: Index::Index<Bit::Bit> = 1
         buffer.insert(10, at: slot)
         _ = buffer.remove(at: slot)
         buffer.insert(20, at: slot)

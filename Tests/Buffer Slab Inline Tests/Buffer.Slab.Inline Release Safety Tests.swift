@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -16,7 +17,7 @@ struct `Buffer.Slab.Inline - Release Safety` {
             var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
                 4
             >()
-            let slot: Bit.Index = 2
+            let slot: Index::Index<Bit::Bit> = 2
             buffer.insert(42, at: slot)
             #expect(buffer.occupancy == 1)
             #expect(buffer.isOccupied(at: slot) == true)
@@ -24,7 +25,7 @@ struct `Buffer.Slab.Inline - Release Safety` {
             await #expect(processExitsWith: .failure) {
                 var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
                     .Inline<4>()
-                let slot: Bit.Index = 2
+                let slot: Index::Index<Bit::Bit> = 2
                 buffer.insert(42, at: slot)
             }
         }
@@ -36,14 +37,14 @@ struct `Buffer.Slab.Inline - Release Safety` {
             var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
                 4
             >()
-            let slot: Bit.Index = 1
+            let slot: Index::Index<Bit::Bit> = 1
             buffer.insert(10, at: slot)
             #expect(buffer.remove(at: slot) == 10)
         } else {
             await #expect(processExitsWith: .failure) {
                 var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
                     .Inline<4>()
-                let slot: Bit.Index = 1
+                let slot: Index::Index<Bit::Bit> = 1
                 _ = buffer.remove(at: slot)
             }
         }

@@ -1,7 +1,8 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Bit_Vector_Bounded
 import Growth
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage
 
 extension Buffer.Slab where S: ~Copyable {
@@ -9,7 +10,7 @@ extension Buffer.Slab where S: ~Copyable {
     @inlinable
     public static func insert(
         _ element: consuming S.Element,
-        at slot: Bit.Index,
+        at slot: Index::Index<Bit::Bit>,
         header: inout Header,
         storage: inout S
     ) {
@@ -19,7 +20,7 @@ extension Buffer.Slab where S: ~Copyable {
 
     @inlinable
     public static func remove(
-        at slot: Bit.Index,
+        at slot: Index::Index<Bit::Bit>,
         header: inout Header,
         storage: inout S
     ) -> S.Element {
@@ -30,7 +31,7 @@ extension Buffer.Slab where S: ~Copyable {
 
     @inlinable
     public static func update(
-        at slot: Bit.Index,
+        at slot: Index::Index<Bit::Bit>,
         with element: consuming S.Element,
         storage: inout S
     ) -> S.Element {
@@ -54,7 +55,7 @@ extension Buffer.Slab where S: ~Copyable {
     @inlinable
     public static func firstVacant(
         header: borrowing Header
-    ) -> Bit.Index? {
+    ) -> Index::Index<Bit::Bit>? {
         header.firstVacant(max: header.bitmap.capacity.maximum)
     }
 

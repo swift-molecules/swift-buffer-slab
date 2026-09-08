@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -21,7 +22,7 @@ struct `Buffer.Slab.Bounded — DS-029 Small-column probe` {
         #expect(buffer.occupancy == 3)
 
         var occupied = 0
-        for raw in 0..<8 where buffer.isOccupied(at: Bit.Index(Ordinal(UInt(raw)))) {
+        for raw in 0..<8 where buffer.isOccupied(at: Index::Index<Bit::Bit>(Ordinal(UInt(raw)))) {
             occupied += 1
         }
         #expect(occupied == 3)

@@ -1,5 +1,5 @@
-import Affine_Standard_Library_Integration
-import Ordinal_Standard_Library_Integration
+import Affine
+import Ordinal
 
 extension Buffer.Slab.Bounded where S: ~Copyable {
 

@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -44,9 +45,9 @@ struct `Buffer.Slab.Inline - Deinit` {
         let tracker = Tracker()
         do {
             var bare = _BareWrapper<TrackedElement, 4>()
-            let s0: Bit.Index = 0
-            let s1: Bit.Index = 1
-            let s2: Bit.Index = 2
+            let s0: Index::Index<Bit::Bit> = 0
+            let s1: Index::Index<Bit::Bit> = 1
+            let s2: Index::Index<Bit::Bit> = 2
             bare._buffer.insert(TrackedElement(1, tracker: tracker), at: s0)
             bare._buffer.insert(TrackedElement(2, tracker: tracker), at: s1)
             bare._buffer.insert(TrackedElement(3, tracker: tracker), at: s2)
@@ -92,7 +93,7 @@ struct `Buffer.Slab.Inline - Single-Free` {
             (0..<n).forEach { i in
                 buffer.insert(
                     Counted(i, ledger),
-                    at: Bit.Index(Ordinal(UInt(i)))
+                    at: Index::Index<Bit::Bit>(Ordinal(UInt(i)))
                 )
             }
         }
@@ -107,9 +108,9 @@ struct `Buffer.Slab.Inline - Single-Free` {
         do {
             var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Counted>>.Slab
                 .Inline<8>()
-            let s0: Bit.Index = 0
-            let s4: Bit.Index = 4
-            let s7: Bit.Index = 7
+            let s0: Index::Index<Bit::Bit> = 0
+            let s4: Index::Index<Bit::Bit> = 4
+            let s7: Index::Index<Bit::Bit> = 7
             buffer.insert(Counted(1, ledger), at: s0)
             buffer.insert(Counted(2, ledger), at: s4)
             buffer.insert(Counted(3, ledger), at: s7)
@@ -124,8 +125,8 @@ struct `Buffer.Slab.Inline - Single-Free` {
         do {
             var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Counted>>.Slab
                 .Inline<8>()
-            let s0: Bit.Index = 0
-            let s1: Bit.Index = 1
+            let s0: Index::Index<Bit::Bit> = 0
+            let s1: Index::Index<Bit::Bit> = 1
             buffer.insert(Counted(1, ledger), at: s0)
             buffer.insert(Counted(2, ledger), at: s1)
             _ = buffer.remove(at: s0)
@@ -151,7 +152,7 @@ struct `Buffer.Slab.Header.Static - Release Isolation` {
         var h = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header.Static<
             8
         >()
-        let s2: Bit.Index = Bit.Index(Ordinal(2 as UInt))
+        let s2: Index::Index<Bit::Bit> = Index::Index<Bit::Bit>(Ordinal(2 as UInt))
         h.bitmap[s2] = true
         #expect(h.isOccupied(at: s2) == true)
         #expect(h.occupancy == 1)

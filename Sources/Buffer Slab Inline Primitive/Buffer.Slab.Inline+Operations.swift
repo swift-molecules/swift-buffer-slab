@@ -1,13 +1,14 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Cardinal
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage
 public import Tagged
 
 extension Buffer.Slab.Inline where S: ~Copyable {
 
     @usableFromInline
-    static var _slotLimit: Bit.Index {
+    static var _slotLimit: Index::Index<Bit::Bit> {
         Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
     }
 
@@ -34,7 +35,7 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     }
 
     @inlinable
-    public func isOccupied(at slot: Bit.Index) -> Bool {
+    public func isOccupied(at slot: Index::Index<Bit::Bit>) -> Bool {
         guard slot < Self._slotLimit else { return false }
         return box.isOccupied(at: slot)
     }
@@ -42,21 +43,21 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     @inlinable
     public mutating func insert(
         _ element: consuming S.Element,
-        at slot: Bit.Index
+        at slot: Index::Index<Bit::Bit>
     ) {
         precondition(slot < Self._slotLimit, "slot exceeds wordCount")
         box.insert(consume element, at: slot)
     }
 
     @inlinable
-    public mutating func remove(at slot: Bit.Index) -> S.Element {
+    public mutating func remove(at slot: Index::Index<Bit::Bit>) -> S.Element {
         precondition(slot < Self._slotLimit, "slot exceeds wordCount")
         return box.remove(at: slot)
     }
 
     @inlinable
     public mutating func update(
-        at slot: Bit.Index,
+        at slot: Index::Index<Bit::Bit>,
         with element: consuming S.Element
     ) -> S.Element {
         precondition(slot < Self._slotLimit, "slot exceeds wordCount")
@@ -64,7 +65,7 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     }
 
     @inlinable
-    public func firstVacant() -> Bit.Index? {
+    public func firstVacant() -> Index::Index<Bit::Bit>? {
         guard
             let slot = box.firstVacant(
                 max: Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount)))
@@ -83,7 +84,7 @@ extension Buffer.Slab.Inline where S: ~Copyable {
 extension Buffer.Slab.Inline where S: ~Copyable, S.Element: Copyable {
 
     @inlinable
-    public func peek(at slot: Bit.Index) -> S.Element {
+    public func peek(at slot: Index::Index<Bit::Bit>) -> S.Element {
         precondition(slot < Self._slotLimit, "slot exceeds wordCount")
         return box.peek(at: slot)
     }

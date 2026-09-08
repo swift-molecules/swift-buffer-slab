@@ -1,10 +1,11 @@
-import Affine_Standard_Library_Integration
-import Ordinal_Standard_Library_Integration
+public import Index
+import Affine
+import Ordinal
 
 extension Buffer.Slab.Small where S: ~Copyable, S.Element: Copyable {
 
     @inlinable
-    public func peek(at slot: Bit.Index) -> S.Element {
+    public func peek(at slot: Index::Index<Bit::Bit>) -> S.Element {
         switch _storage {
 
         case .heap(let buf):

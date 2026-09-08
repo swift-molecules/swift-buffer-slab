@@ -1,7 +1,8 @@
+public import Index
 import Bit_Vector_Bounded
 import Buffer_Slab
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -22,7 +23,7 @@ struct `Buffer.Slab.Header` {
     func `isOccupied tracks bitmap state`() {
         var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
             .init(capacity: 8)
-        let slot: Bit.Index = 3
+        let slot: Index::Index<Bit::Bit> = 3
         #expect(!header.isOccupied(at: slot) == true)
 
         header.bitmap[slot] = true

@@ -1,7 +1,7 @@
-import Affine_Standard_Library_Integration
+import Affine
 import Bit_Vector_Static
 import Index
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage
 
 extension Buffer.Slab where S: ~Copyable {
@@ -41,13 +41,13 @@ extension Buffer.Slab.Inline where S: ~Copyable {
         }
 
         deinit {
-            var slot = Bit.Index(_unchecked: Ordinal(0))
+            var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
             let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
             while slot < end {
                 if header.bitmap[slot] {
                     _ = storage.move(at: slot.retag(S.Element.self))
                 }
-                slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
+                slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
             }
         }
     }
@@ -60,9 +60,9 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     @usableFromInline
     func isFull(capacity: Tagged<Bit, Cardinal>) -> Bool { header.occupancy >= capacity }
     @usableFromInline
-    func isOccupied(at slot: Bit.Index) -> Bool { header.isOccupied(at: slot) }
+    func isOccupied(at slot: Index::Index<Bit::Bit>) -> Bool { header.isOccupied(at: slot) }
     @usableFromInline
-    func firstVacant(max: Tagged<Bit, Cardinal>) -> Bit.Index? { header.firstVacant(max: max) }
+    func firstVacant(max: Tagged<Bit, Cardinal>) -> Index::Index<Bit::Bit>? { header.firstVacant(max: max) }
 
     @usableFromInline
     static func _preconditionReleaseSound(function: StaticString = #function) {
@@ -77,7 +77,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     }
 
     @usableFromInline
-    func insert(_ element: consuming S.Element, at slot: Bit.Index) {
+    func insert(_ element: consuming S.Element, at slot: Index::Index<Bit::Bit>) {
         Self._preconditionReleaseSound()
         storage.initialize(at: slot.retag(S.Element.self), to: consume element)
         storage.initialization = .empty
@@ -85,7 +85,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     }
 
     @usableFromInline
-    func remove(at slot: Bit.Index) -> S.Element {
+    func remove(at slot: Index::Index<Bit::Bit>) -> S.Element {
         Self._preconditionReleaseSound()
         let element = storage.move(at: slot.retag(S.Element.self))
         storage.initialization = .empty
@@ -94,7 +94,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     }
 
     @usableFromInline
-    func update(at slot: Bit.Index, with element: consuming S.Element) -> S.Element {
+    func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element {
         Self._preconditionReleaseSound()
         let index = slot.retag(S.Element.self)
         let old = storage.move(at: index)
@@ -106,7 +106,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     @usableFromInline
     func removeAll() {
         Self._preconditionReleaseSound()
-        var slot = Bit.Index(_unchecked: Ordinal(0))
+        var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
@@ -114,14 +114,14 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
                 storage.initialization = .empty
                 header.bitmap[slot] = false
             }
-            slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
+            slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
         }
     }
 
     @usableFromInline
     func drain(_ body: (consuming S.Element) -> Void) {
         Self._preconditionReleaseSound()
-        var slot = Bit.Index(_unchecked: Ordinal(0))
+        var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
@@ -130,25 +130,25 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
                 header.bitmap[slot] = false
                 body(consume element)
             }
-            slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
+            slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
         }
     }
 }
 
 extension Buffer.Slab.Inline.Box where S: ~Copyable, S.Element: Copyable {
     @usableFromInline
-    func peek(at slot: Bit.Index) -> S.Element { storage[slot.retag(S.Element.self)] }
+    func peek(at slot: Index::Index<Bit::Bit>) -> S.Element { storage[slot.retag(S.Element.self)] }
 
     @usableFromInline
     func occupiedElements(max wordCount: Int) -> [S.Element] {
         var result: [S.Element] = []
-        var slot = Bit.Index(_unchecked: Ordinal(0))
+        var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
                 result.append(storage[slot.retag(S.Element.self)])
             }
-            slot = Bit.Index(_unchecked: Ordinal(slot.underlying.rawValue + 1))
+            slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
         }
         return result
     }

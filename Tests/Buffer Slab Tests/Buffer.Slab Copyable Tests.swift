@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -19,9 +20,9 @@ struct `Buffer.Slab Clone & Teardown` {
 
         let copy = original.clone()
         #expect(copy.occupancy == 3)
-        #expect(copy[Bit.Index(Ordinal(0 as UInt))] == 10)
-        #expect(copy[Bit.Index(Ordinal(3 as UInt))] == 20)
-        #expect(copy[Bit.Index(Ordinal(7 as UInt))] == 30)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(0 as UInt))] == 10)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(3 as UInt))] == 20)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(7 as UInt))] == 30)
 
         #expect(original.occupancy == 3)
     }
@@ -37,8 +38,8 @@ struct `Buffer.Slab Clone & Teardown` {
         var copy = original.clone()
 
         #expect(copy.occupancy == 2)
-        #expect(copy[Bit.Index(Ordinal(0 as UInt))] == 10)
-        #expect(copy[Bit.Index(Ordinal(3 as UInt))] == 20)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(0 as UInt))] == 10)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(3 as UInt))] == 20)
 
         copy.insert(77, at: 5)
         _ = copy.remove(at: 0)
@@ -139,6 +140,6 @@ struct `Buffer.Slab Clone & Teardown` {
         )
         buffer.insert(10, at: 0)
         _ = buffer.update(at: 0, with: 99)
-        #expect(buffer[Bit.Index(Ordinal(0 as UInt))] == 99)
+        #expect(buffer[Index::Index<Bit::Bit>(Ordinal(0 as UInt))] == 99)
     }
 }

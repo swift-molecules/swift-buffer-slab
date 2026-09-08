@@ -1,7 +1,7 @@
-import Affine_Standard_Library_Integration
+import Affine
 import Bit_Vector_Bounded
 import Index
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage
 
 extension Buffer where S: Store.`Protocol`, S: ~Copyable {

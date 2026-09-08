@@ -1,16 +1,17 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Bit_Vector_Bounded
 import Growth
-public import Memory_Allocator_Primitive
+public import Memory_Allocator
 public import Memory_Small
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage_Memory
 
 extension Property.Borrow where Base: ~Copyable {
 
     @inlinable
     public func occupied<Element>(
-        _ body: (Bit.Index) -> Void
+        _ body: (Index::Index<Bit::Bit>) -> Void
     )
     where
         Tag == Sequence.ForEach,

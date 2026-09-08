@@ -1,6 +1,7 @@
+public import Index
 import Buffer_Slab
 import Buffer_Slab_Test_Support
-import Memory_Allocator_Primitive
+import Memory_Allocator
 import Memory_Small
 import Storage_Memory
 import Testing
@@ -20,7 +21,7 @@ struct `Buffer.Slab — DS-029 Small-column probe` {
 
         #expect(buffer.occupancy == 3)
 
-        var seen: [Bit.Index] = []
+        var seen: [Index::Index<Bit::Bit>] = []
         buffer.occupiedSlots.forEach { seen.append($0) }
         #expect(seen.count == 3)
         #expect(buffer.isOccupied(at: 0) == true)
@@ -42,8 +43,8 @@ struct `Buffer.Slab — DS-029 Small-column probe` {
 
         var copy = original.clone()
         #expect(copy.occupancy == 2)
-        #expect(copy[Bit.Index(Ordinal(0 as UInt))] == 10)
-        #expect(copy[Bit.Index(Ordinal(3 as UInt))] == 20)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(0 as UInt))] == 10)
+        #expect(copy[Index::Index<Bit::Bit>(Ordinal(3 as UInt))] == 20)
 
         copy.insert(99, at: 6)
         #expect(original.isOccupied(at: 6) == false)

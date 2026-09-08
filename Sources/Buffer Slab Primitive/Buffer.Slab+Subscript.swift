@@ -1,7 +1,8 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Bit_Vector_Bounded
 import Growth
-import Ordinal_Standard_Library_Integration
+import Ordinal
 public import Storage
 
 extension Buffer.Slab where S: ~Copyable {
@@ -15,7 +16,7 @@ extension Buffer.Slab where S: ~Copyable {
 extension Buffer.Slab where S: ~Copyable {
 
     @inlinable
-    public subscript(slot: Bit.Index) -> S.Element {
+    public subscript(slot: Index::Index<Bit::Bit>) -> S.Element {
         _read {
             yield storage[slot.retag(S.Element.self)]
         }

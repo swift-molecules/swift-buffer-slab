@@ -1,7 +1,8 @@
-import Affine_Standard_Library_Integration
+public import Index
+import Affine
 public import Bit_Vector_Bounded
 import Growth
-import Ordinal_Standard_Library_Integration
+import Ordinal
 
 extension Buffer.Slab where S: ~Copyable {
 
@@ -40,12 +41,12 @@ extension Buffer.Slab.Header where S: ~Copyable {
     }
 
     @inlinable
-    public func isOccupied(at slot: Bit.Index) -> Bool {
+    public func isOccupied(at slot: Index::Index<Bit::Bit>) -> Bool {
         bitmap[slot]
     }
 
     @inlinable
-    public func firstVacant(max: Tagged<Bit, Cardinal>) -> Bit.Index? {
+    public func firstVacant(max: Tagged<Bit, Cardinal>) -> Index::Index<Bit::Bit>? {
         bitmap.zeros.first(max: max)
     }
 }
