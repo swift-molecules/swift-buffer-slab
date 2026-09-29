@@ -38,7 +38,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-property.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-ownership.git", branch: "main"),
         .package(url: "https://github.com/swift-molecules/swift-bit-vector.git", branch: "main"),
-        .package(url: "https://github.com/swift-molecules/swift-memory-allocation.git", branch: "main", traits: ["MemoryInline", "MemorySmall"]),
+        .package(url: "https://github.com/swift-molecules/swift-memory-allocation.git", branch: "main", traits: ["MemoryInline", "MemorySmall", "MemoryAllocatorArena"]),
     ],
     targets: [
         .target(
