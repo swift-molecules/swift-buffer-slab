@@ -3,7 +3,6 @@ import Buffer_Slab_Test_Support
 import Index
 import Memory_Allocator
 import Memory_Small
-import Storage_Memory
 import Storage
 import Testing
 

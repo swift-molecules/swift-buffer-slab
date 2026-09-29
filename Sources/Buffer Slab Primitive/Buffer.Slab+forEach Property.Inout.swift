@@ -5,7 +5,7 @@ import Growth
 public import Memory_Allocator
 public import Memory_Small
 import Ordinal
-public import Storage_Memory
+public import Storage
 
 extension Property.Borrow where Base: ~Copyable {
 

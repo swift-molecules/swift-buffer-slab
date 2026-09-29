@@ -6,7 +6,7 @@ public import Memory_Allocator
 public import Memory_Allocator_Protocol
 import Ordinal
 import Sequence
-public import Storage_Memory
+public import Storage
 public import Tagged
 
 extension Buffer.Slab where S: ~Copyable {

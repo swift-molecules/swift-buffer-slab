@@ -3,7 +3,7 @@ import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
 import Memory_Allocator
 import Memory_Small
-import Storage_Memory
+import Storage
 import Testing
 
 @Suite

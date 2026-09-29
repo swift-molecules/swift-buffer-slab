@@ -5,7 +5,7 @@ public import Cardinal
 public import Memory_Allocator
 public import Memory_Allocator_Protocol
 import Ordinal
-public import Storage_Memory
+public import Storage
 public import Tagged
 
 extension Buffer.Slab.Bounded where S: ~Copyable {

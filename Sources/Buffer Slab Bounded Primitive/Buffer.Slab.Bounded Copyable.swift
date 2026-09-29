@@ -5,7 +5,6 @@ import Index
 public import Memory_Allocator
 public import Memory_Allocator_Protocol
 import Ordinal
-public import Storage_Memory
 public import Storage
 public import Tagged
 
