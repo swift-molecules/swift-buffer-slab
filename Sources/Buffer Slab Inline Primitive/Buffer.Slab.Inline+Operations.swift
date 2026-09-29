@@ -24,7 +24,7 @@ extension Buffer.Slab.Inline where S: ~Copyable {
     public var occupancy: Tagged<Bit, Cardinal> { box.occupancy }
 
     @inlinable
-    public var count: Tagged<Element, Cardinal> { box.occupancy.retag(Element.self) }
+    public var count: Tagged<S.Element, Cardinal> { box.occupancy.retag(S.Element.self) }
 
     @inlinable
     public var isEmpty: Bool { box.isEmpty }
@@ -119,3 +119,5 @@ extension Buffer.Slab.Inline where S: ~Copyable {
         }
     }
 }
+
+extension Buffer.Slab.Inline: Buffer.`Protocol` where S: ~Copyable {}

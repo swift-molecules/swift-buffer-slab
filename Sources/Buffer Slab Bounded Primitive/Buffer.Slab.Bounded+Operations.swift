@@ -25,7 +25,7 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
     public var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
 
     @inlinable
-    public var count: Tagged<Element, Cardinal> { occupancy.retag(Element.self) }
+    public var count: Tagged<S.Element, Cardinal> { occupancy.retag(S.Element.self) }
 
     @inlinable
     public var isEmpty: Bool { header.isEmpty }
@@ -98,3 +98,5 @@ extension Buffer.Slab.Bounded where S: ~Copyable {
         }
     }
 }
+
+extension Buffer.Slab.Bounded: Buffer.`Protocol` where S: ~Copyable {}
