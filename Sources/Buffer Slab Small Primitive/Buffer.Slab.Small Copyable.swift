@@ -1,5 +1,5 @@
-public import Index
 import Affine
+public import Index
 import Ordinal
 
 extension Buffer.Slab.Small where S: ~Copyable, S.Element: Copyable {

@@ -1,7 +1,7 @@
-public import Index
 import Affine
 public import Bit_Vector_Bounded
 import Growth
+public import Index
 import Ordinal
 
 extension Buffer.Slab where S: ~Copyable {

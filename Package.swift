@@ -205,7 +205,7 @@ let package = Package(
                 .target(name: "Buffer Slab Test Support"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
-"Buffer Slab", "Buffer Slab Test Support",
+                "Buffer Slab", "Buffer Slab Test Support",
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
             ]
@@ -217,7 +217,7 @@ let package = Package(
                 .target(name: "Buffer Slab Test Support"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
-"Buffer Slab Bounded", "Buffer Slab Test Support",
+                "Buffer Slab Bounded", "Buffer Slab Test Support",
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
             ]
@@ -229,7 +229,7 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
-"Buffer Slab Inline", "Buffer Slab Test Support",
+                "Buffer Slab Inline", "Buffer Slab Test Support",
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
             ]
         ),
@@ -238,7 +238,7 @@ let package = Package(
             dependencies: [
                 .target(name: "Buffer Slab Test Support"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
-"Buffer Slab Small", "Buffer Slab Test Support",
+                "Buffer Slab Small", "Buffer Slab Test Support",
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
             ]

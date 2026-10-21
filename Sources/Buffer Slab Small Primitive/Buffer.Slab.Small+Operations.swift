@@ -1,6 +1,6 @@
-public import Index
 import Affine
 public import Cardinal
+public import Index
 public import Memory_Allocator
 public import Memory_Small
 import Ordinal
@@ -117,8 +117,7 @@ extension Buffer.Slab.Small where S: ~Copyable {
     }
 
     @inlinable
-    public mutating func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element
-    {
+    public mutating func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element {
         switch _storage {
         case .heap(var buf):
             let old = buf.update(at: slot, with: consume element)

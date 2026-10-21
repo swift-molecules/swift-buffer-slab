@@ -1,6 +1,6 @@
-public import Index
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
+public import Index
 import Memory_Allocator
 import Memory_Small
 import Storage
@@ -120,9 +120,8 @@ struct `Buffer.Slab.Inline` {
             8
         >([10, 20, 30])
         var collected: [Int] = []
-        var iter:
-            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>.Iterator =
-                buffer.makeIterator()
+        var iter: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>.Iterator =
+            buffer.makeIterator()
         while let value = iter.next() {
             collected.append(value)
         }

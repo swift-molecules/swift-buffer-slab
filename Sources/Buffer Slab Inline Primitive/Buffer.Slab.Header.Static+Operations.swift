@@ -1,6 +1,6 @@
-public import Index
 import Affine
 public import Growth
+public import Index
 import Ordinal
 
 extension Buffer.Slab.Header.Static where S: ~Copyable {

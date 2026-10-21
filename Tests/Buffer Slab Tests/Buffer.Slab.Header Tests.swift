@@ -1,7 +1,7 @@
-public import Index
 import Bit_Vector_Bounded
 import Buffer_Slab
 import Buffer_Slab_Test_Support
+public import Index
 import Memory_Allocator
 import Memory_Small
 import Storage

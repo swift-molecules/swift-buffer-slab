@@ -1,7 +1,7 @@
-public import Index
 import Affine
 public import Bit_Vector_Bounded
 public import Cardinal
+public import Index
 public import Memory_Allocator
 public import Memory_Allocator_Protocol
 import Ordinal
@@ -59,8 +59,7 @@ extension Buffer.Slab where S: ~Copyable {
     }
 
     @inlinable
-    public mutating func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element
-    {
+    public mutating func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element {
         Self.update(at: slot, with: consume element, storage: &box.storage)
     }
 

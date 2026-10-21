@@ -1,6 +1,6 @@
-public import Index
 import Affine
 public import Cardinal
+public import Index
 import Ordinal
 public import Storage
 public import Tagged

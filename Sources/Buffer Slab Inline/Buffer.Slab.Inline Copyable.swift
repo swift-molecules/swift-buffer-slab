@@ -1,5 +1,5 @@
-public import Index
 import Affine
+public import Index
 public import Iterator
 import Ordinal
 
