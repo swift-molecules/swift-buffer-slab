@@ -180,15 +180,7 @@ let package = Package(
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Cardinal", package: "swift-cardinal"),
-                .product(
-                    name: "Cardinal",
-                    package: "swift-cardinal"
-                ),
                 .product(name: "Tagged", package: "swift-tagged"),
-                .product(
-                    name: "Tagged",
-                    package: "swift-tagged"
-                ),
                 .product(
                     name: "Ordinal",
                     package: "swift-ordinal"
