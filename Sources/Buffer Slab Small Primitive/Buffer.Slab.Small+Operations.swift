@@ -5,7 +5,6 @@ public import Memory_Allocator
 public import Memory_Small
 import Ordinal
 public import Storage
-import Storage
 public import Tagged
 
 extension Buffer.Slab.Small where S: ~Copyable {

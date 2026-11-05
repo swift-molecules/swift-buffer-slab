@@ -2,7 +2,7 @@ import Affine
 import Bit_Vector_Bounded
 import Index
 import Ordinal
-public import Storage
+import Storage
 
 extension Buffer where S: Store.`Protocol`, S: ~Copyable {
 

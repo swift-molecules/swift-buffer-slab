@@ -3,7 +3,7 @@ public import Bit_Vector_Bounded
 import Growth
 public import Index
 import Ordinal
-public import Storage
+import Storage
 
 extension Buffer.Slab where S: ~Copyable {
 
