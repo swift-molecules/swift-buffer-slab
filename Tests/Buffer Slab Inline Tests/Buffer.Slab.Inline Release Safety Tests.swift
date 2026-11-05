@@ -51,6 +51,23 @@ struct `Buffer.Slab.Inline - Release Safety` {
     }
 
     @Test
+    func `removeAll traps in every non-debug build, including -Ounchecked`() async {
+        if _isDebugAssertConfiguration() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
+                4
+            >()
+            buffer.removeAll()
+            #expect(buffer.isEmpty == true)
+        } else {
+            await #expect(processExitsWith: .failure) {
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
+                    .Inline<4>()
+                buffer.removeAll()
+            }
+        }
+    }
+
+    @Test
     func `empty-buffer construction and read-only queries remain usable under release`() {
 
         let buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()

@@ -66,14 +66,15 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     static func _preconditionReleaseSound(function: StaticString = #function) {
-        precondition(
-            _isDebugAssertConfiguration(),
-            "Buffer.Slab.Inline/.Small mutation (\(function)) is release-mode-unsound "
-                + "(swift-issue-inlinearray-class-field-write-elision): the box-owned occupancy "
-                + "bitmap write is elided under -O, silently corrupting sparse occupancy. "
-                + "Blocked pending the occupancy-placement decision — see the type doc-comment "
-                + "on Buffer.Slab.Inline and .handoffs/HANDOFF-sparse-occupancy-placement.md."
-        )
+        guard _isDebugAssertConfiguration() else {
+            fatalError(
+                "Buffer.Slab.Inline/.Small mutation (\(function)) is release-mode-unsound "
+                    + "(swift-issue-inlinearray-class-field-write-elision): the box-owned occupancy "
+                    + "bitmap write is elided under -O, silently corrupting sparse occupancy. "
+                    + "Blocked pending the occupancy-placement decision — see the type doc-comment "
+                    + "on Buffer.Slab.Inline and .handoffs/HANDOFF-sparse-occupancy-placement.md."
+            )
+        }
     }
 
     @usableFromInline
