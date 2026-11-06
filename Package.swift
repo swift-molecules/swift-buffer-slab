@@ -67,7 +67,7 @@ let package = Package(
         .target(
             name: "Buffer Slab Bounded Primitive",
             dependencies: [
-                "Buffer Slab Primitive",
+                .target(name: "Buffer Slab Primitive"),
                 .product(name: "Buffer", package: "swift-buffer"),
                 .product(name: "Growth", package: "swift-growth"),
                 .product(name: "Storage", package: "swift-storage"),
@@ -91,7 +91,7 @@ let package = Package(
         .target(
             name: "Buffer Slab Inline Primitive",
             dependencies: [
-                "Buffer Slab Primitive",
+                .target(name: "Buffer Slab Primitive"),
                 .product(name: "Buffer", package: "swift-buffer"),
                 .product(name: "Growth", package: "swift-growth"),
                 .product(name: "Storage", package: "swift-storage"),
@@ -111,8 +111,8 @@ let package = Package(
         .target(
             name: "Buffer Slab Small Primitive",
             dependencies: [
-                "Buffer Slab Primitive",
-                "Buffer Slab Inline Primitive",
+                .target(name: "Buffer Slab Primitive"),
+                .target(name: "Buffer Slab Inline Primitive"),
                 .product(name: "Buffer", package: "swift-buffer"),
                 .product(name: "Growth", package: "swift-growth"),
                 .product(name: "Storage", package: "swift-storage"),
@@ -133,17 +133,17 @@ let package = Package(
         .target(
             name: "Buffer Slab",
             dependencies: [
-                "Buffer Slab Primitive",
-                "Buffer Slab Bounded",
-                "Buffer Slab Inline",
-                "Buffer Slab Small",
+                .target(name: "Buffer Slab Primitive"),
+                .target(name: "Buffer Slab Bounded"),
+                .target(name: "Buffer Slab Inline"),
+                .target(name: "Buffer Slab Small"),
                 .product(name: "Sequence", package: "swift-sequence"),
             ]
         ),
         .target(
             name: "Buffer Slab Bounded",
             dependencies: [
-                "Buffer Slab Bounded Primitive",
+                .target(name: "Buffer Slab Bounded Primitive"),
                 .product(name: "Sequence", package: "swift-sequence"),
             ]
         ),
@@ -153,7 +153,7 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Sequence", package: "swift-sequence"),
 
-                "Buffer Slab Inline Primitive",
+                .target(name: "Buffer Slab Inline Primitive"),
                 .product(name: "Iterator", package: "swift-iterator"),
                 .product(name: "Affine", package: "swift-affine"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
@@ -162,19 +162,19 @@ let package = Package(
         .target(
             name: "Buffer Slab Small",
             dependencies: [
-                "Buffer Slab Small Primitive",
-                "Buffer Slab Primitive",
-                "Buffer Slab Inline",
+                .target(name: "Buffer Slab Small Primitive"),
+                .target(name: "Buffer Slab Primitive"),
+                .target(name: "Buffer Slab Inline"),
                 .product(name: "Sequence", package: "swift-sequence"),
             ]
         ),
         .target(
             name: "Buffer Slab Test Support",
             dependencies: [
-                "Buffer Slab",
-                "Buffer Slab Bounded",
-                "Buffer Slab Inline",
-                "Buffer Slab Small",
+                .target(name: "Buffer Slab"),
+                .target(name: "Buffer Slab Bounded"),
+                .target(name: "Buffer Slab Inline"),
+                .target(name: "Buffer Slab Small"),
                 .product(name: "Storage", package: "swift-storage"),
                 .product(name: "Memory", package: "swift-memory"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
@@ -197,7 +197,7 @@ let package = Package(
                 .target(name: "Buffer Slab Test Support"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
-                "Buffer Slab",
+                .target(name: "Buffer Slab"),
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
             ]
@@ -209,7 +209,7 @@ let package = Package(
                 .target(name: "Buffer Slab Test Support"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
-                "Buffer Slab Bounded",
+                .target(name: "Buffer Slab Bounded"),
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
             ]
@@ -221,7 +221,7 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
-                "Buffer Slab Inline",
+                .target(name: "Buffer Slab Inline"),
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
             ]
         ),
@@ -230,7 +230,7 @@ let package = Package(
             dependencies: [
                 .target(name: "Buffer Slab Test Support"),
                 .product(name: "Memory Allocator", package: "swift-memory-allocation"),
-                "Buffer Slab Small",
+                .target(name: "Buffer Slab Small"),
                 .product(name: "Memory Small", package: "swift-memory-allocation"),
                 .product(name: "Storage", package: "swift-storage"),
             ]
