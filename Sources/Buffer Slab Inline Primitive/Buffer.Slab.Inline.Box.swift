@@ -2,7 +2,7 @@ import Affine
 import Bit_Vector_Static
 import Index
 import Ordinal
-public import Storage
+import Storage
 
 
 extension Buffer.Slab.Inline where S: ~Copyable {
