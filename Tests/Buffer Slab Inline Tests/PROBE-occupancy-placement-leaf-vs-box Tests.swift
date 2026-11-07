@@ -141,7 +141,7 @@ private final class T0Box<Element: ~Copyable> {
         self._storage = _Raw()
     }
     func insert(_ element: consuming Element, at slot: Int) {
-        let base = unsafe withUnsafeMutablePointer(to: &_storage) { raw in
+        let base = withUnsafeMutablePointer(to: &_storage) { raw in
             unsafe UnsafeMutableRawPointer(raw).assumingMemoryBound(to: Element.self)
         }
         unsafe (base + slot).initialize(to: element)
@@ -150,7 +150,7 @@ private final class T0Box<Element: ~Copyable> {
     var occupancy: Tagged<Bit, Cardinal> { header.occupancy }
     deinit {
         for slot in 0..<4 where header.isOccupied(at: bitIndex(slot)) {
-            unsafe withUnsafePointer(to: _storage) { raw in
+            withUnsafePointer(to: _storage) { raw in
                 let base = unsafe UnsafeMutableRawPointer(mutating: UnsafeRawPointer(raw))
                     .assumingMemoryBound(to: Element.self)
                 unsafe (base + slot).deinitialize(count: 1)
@@ -171,7 +171,7 @@ private struct T2Leaf<Element: ~Copyable>: ~Copyable {
         self._storage = _Raw()
     }
     mutating func insert(_ element: consuming Element, at slot: Int) {
-        let base = unsafe withUnsafeMutablePointer(to: &_storage) { raw in
+        let base = withUnsafeMutablePointer(to: &_storage) { raw in
             unsafe UnsafeMutableRawPointer(raw).assumingMemoryBound(to: Element.self)
         }
         unsafe (base + slot).initialize(to: element)
@@ -181,7 +181,7 @@ private struct T2Leaf<Element: ~Copyable>: ~Copyable {
     func isOccupied(at slot: Int) -> Bool { header.isOccupied(at: bitIndex(slot)) }
     deinit {
         for slot in 0..<4 where header.isOccupied(at: bitIndex(slot)) {
-            unsafe withUnsafePointer(to: _storage) { raw in
+            withUnsafePointer(to: _storage) { raw in
                 let base = unsafe UnsafeMutableRawPointer(mutating: UnsafeRawPointer(raw))
                     .assumingMemoryBound(to: Element.self)
                 unsafe (base + slot).deinitialize(count: 1)
