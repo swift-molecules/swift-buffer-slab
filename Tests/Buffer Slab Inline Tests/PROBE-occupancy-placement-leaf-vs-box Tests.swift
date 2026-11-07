@@ -31,38 +31,42 @@ private struct Counted: ~Copyable {
     deinit { ledger.record(id) }
 }
 
-@Suite(
-    .disabled(
-        if: !_isDebugAssertConfiguration(),
-        "real Box.insert now preconditions in release (fable-448 F-001 fix) — would abort the process, not fail a test"
-    )
-)
-struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
-    @Test
-    func `PC real box Inline4 insert@2 under -O`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
-        let s2: Index::Index<Bit::Bit> = 2
-        buffer.insert(42, at: s2)
-        let occ = buffer.occupancy
-        let o2 = buffer.isOccupied(at: s2)
-        print(
-            "PC[real box, Inline4, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]"
-        )
-    }
+enum `PROBE-occupancy-placement-leaf-vs-box Tests` {}
 
-    @Test
-    func `PC real box Inline8 sparse 0-4-7 under -O (context)`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>()
-        let s0: Index::Index<Bit::Bit> = 0
-        let s4: Index::Index<Bit::Bit> = 4
-        let s7: Index::Index<Bit::Bit> = 7
-        buffer.insert(10, at: s0)
-        buffer.insert(40, at: s4)
-        buffer.insert(70, at: s7)
-        let occ = buffer.occupancy
-        print(
-            "PC[real box, Inline8, sparse 0/4/7]: occupancy=\(String(describing: occ))  [correct: 3]"
+extension `PROBE-occupancy-placement-leaf-vs-box Tests` {
+    @Suite(
+        .disabled(
+            if: !_isDebugAssertConfiguration(),
+            "real Box.insert now preconditions in release (fable-448 F-001 fix) — would abort the process, not fail a test"
         )
+    )
+    struct `OccupancyPlacementProbe - PC (real Buffer.Slab.Inline)` {
+        @Test
+        func `PC real box Inline4 insert@2 under -O`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
+            let s2: Index::Index<Bit::Bit> = 2
+            buffer.insert(42, at: s2)
+            let occ = buffer.occupancy
+            let o2 = buffer.isOccupied(at: s2)
+            print(
+                "PC[real box, Inline4, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]"
+            )
+        }
+
+        @Test
+        func `PC real box Inline8 sparse 0-4-7 under -O (context)`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<8>()
+            let s0: Index::Index<Bit::Bit> = 0
+            let s4: Index::Index<Bit::Bit> = 4
+            let s7: Index::Index<Bit::Bit> = 7
+            buffer.insert(10, at: s0)
+            buffer.insert(40, at: s4)
+            buffer.insert(70, at: s7)
+            let occ = buffer.occupancy
+            print(
+                "PC[real box, Inline8, sparse 0/4/7]: occupancy=\(String(describing: occ))  [correct: 3]"
+            )
+        }
     }
 }
 
@@ -106,28 +110,30 @@ extension T1Leaf {
     func isOccupied(at slot: Int) -> Bool { header.isOccupied(at: bitIndex(slot)) }
 }
 
-@Suite
-struct `OccupancyPlacementProbe - T1 (real Store.Inline: class vs struct)` {
-    @Test
-    func `T1Box class over real Store.Inline insert@2 under -O`() {
-        let box = T1Box()
-        box.insert(42, at: 2)
-        let occ = box.occupancy
-        let o2 = box.isOccupied(at: 2)
-        print(
-            "T1Box[class, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]"
-        )
-    }
+extension `PROBE-occupancy-placement-leaf-vs-box Tests` {
+    @Suite
+    struct `OccupancyPlacementProbe - T1 (real Store.Inline: class vs struct)` {
+        @Test
+        func `T1Box class over real Store.Inline insert@2 under -O`() {
+            let box = T1Box()
+            box.insert(42, at: 2)
+            let occ = box.occupancy
+            let o2 = box.isOccupied(at: 2)
+            print(
+                "T1Box[class, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true ; DSE: 0/false]"
+            )
+        }
 
-    @Test
-    func `T1Leaf struct over real Store.Inline insert@2 under -O (THE ANSWER)`() {
-        var leaf = T1Leaf()
-        leaf.insert(42, at: 2)
-        let occ = leaf.occupancy
-        let o2 = leaf.isOccupied(at: 2)
-        print(
-            "T1Leaf[struct, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [escapes: 1/true ; also-DSE: 0/false]"
-        )
+        @Test
+        func `T1Leaf struct over real Store.Inline insert@2 under -O (THE ANSWER)`() {
+            var leaf = T1Leaf()
+            leaf.insert(42, at: 2)
+            let occ = leaf.occupancy
+            let o2 = leaf.isOccupied(at: 2)
+            print(
+                "T1Leaf[struct, real Store.Inline, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [escapes: 1/true ; also-DSE: 0/false]"
+            )
+        }
     }
 }
 
@@ -190,32 +196,34 @@ private struct T2Leaf<Element: ~Copyable>: ~Copyable {
     }
 }
 
-@Suite
-struct `OccupancyPlacementProbe - T0/T2 (hand-built leaf end-shape)` {
-    @Test
-    func `T0Box hand-built class insert@2 under -O (context)`() {
-        let box = T0Box<Int>()
-        box.insert(42, at: 2)
-        let occ = box.occupancy
-        print(
-            "T0Box[class, hand-built cells, insert@2]: occupancy=\(String(describing: occ))  [correct: 1]"
-        )
-    }
-
-    @Test
-    func `T2Leaf intended leaf insert@2 occupancy AND single-free under -O`() {
-        let ledger = Ledger()
-        do {
-            var leaf = T2Leaf<Counted>()
-            leaf.insert(Counted(2, ledger), at: 2)
-            let occ = leaf.occupancy
-            let o2 = leaf.isOccupied(at: 2)
+extension `PROBE-occupancy-placement-leaf-vs-box Tests` {
+    @Suite
+    struct `OccupancyPlacementProbe - T0/T2 (hand-built leaf end-shape)` {
+        @Test
+        func `T0Box hand-built class insert@2 under -O (context)`() {
+            let box = T0Box<Int>()
+            box.insert(42, at: 2)
+            let occ = box.occupancy
             print(
-                "T2Leaf[struct, hand-built cells, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true]"
+                "T0Box[class, hand-built cells, insert@2]: occupancy=\(String(describing: occ))  [correct: 1]"
             )
         }
-        print(
-            "T2Leaf single-free: total=\(ledger.total) maxPerID=\(ledger.maxPerID)  [correct: 1/1 ; bitmap-lost: 0/0]"
-        )
+
+        @Test
+        func `T2Leaf intended leaf insert@2 occupancy AND single-free under -O`() {
+            let ledger = Ledger()
+            do {
+                var leaf = T2Leaf<Counted>()
+                leaf.insert(Counted(2, ledger), at: 2)
+                let occ = leaf.occupancy
+                let o2 = leaf.isOccupied(at: 2)
+                print(
+                    "T2Leaf[struct, hand-built cells, insert@2]: occupancy=\(String(describing: occ)) isOccupied(2)=\(o2)  [correct: 1/true]"
+                )
+            }
+            print(
+                "T2Leaf single-free: total=\(ledger.total) maxPerID=\(ledger.maxPerID)  [correct: 1/1 ; bitmap-lost: 0/0]"
+            )
+        }
     }
 }

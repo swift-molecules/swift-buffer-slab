@@ -7,58 +7,62 @@ import Memory_Small
 import Storage
 import Testing
 
-@Suite
-struct `Buffer.Slab.Header` {
+enum `Buffer.Slab.Header Tests` {}
 
-    @Test
-    func `init creates empty bitmap`() {
-        let header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 8)
-        #expect(header.isEmpty == true)
-        #expect(!header.isFull == true)
-        #expect(header.occupancy == 0)
-    }
+extension `Buffer.Slab.Header Tests` {
+    @Suite
+    struct `Buffer.Slab.Header` {
 
-    @Test
-    func `isOccupied tracks bitmap state`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 8)
-        let slot: Index::Index<Bit::Bit> = 3
-        #expect(!header.isOccupied(at: slot) == true)
+        @Test
+        func `init creates empty bitmap`() {
+            let header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 8)
+            #expect(header.isEmpty == true)
+            #expect(!header.isFull == true)
+            #expect(header.occupancy == 0)
+        }
 
-        header.bitmap[slot] = true
-        #expect(header.isOccupied(at: slot) == true)
-    }
+        @Test
+        func `isOccupied tracks bitmap state`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 8)
+            let slot: Index::Index<Bit::Bit> = 3
+            #expect(!header.isOccupied(at: slot) == true)
 
-    @Test
-    func `occupancy reflects popcount`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 8)
-        header.bitmap[0] = true
-        header.bitmap[3] = true
-        header.bitmap[7] = true
-        #expect(header.occupancy == 3)
-    }
+            header.bitmap[slot] = true
+            #expect(header.isOccupied(at: slot) == true)
+        }
 
-    @Test
-    func `firstVacant scans for empty slot`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 4)
-        header.bitmap[0] = true
-        header.bitmap[1] = true
-        let vacant = header.firstVacant(max: header.bitmap.capacity.maximum)
-        #expect(vacant == 2)
-    }
+        @Test
+        func `occupancy reflects popcount`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 8)
+            header.bitmap[0] = true
+            header.bitmap[3] = true
+            header.bitmap[7] = true
+            #expect(header.occupancy == 3)
+        }
 
-    @Test
-    func `firstVacant returns nil when full`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 4)
-        header.bitmap[0] = true
-        header.bitmap[1] = true
-        header.bitmap[2] = true
-        header.bitmap[3] = true
-        let vacant = header.firstVacant(max: header.bitmap.capacity.maximum)
-        #expect(vacant == nil)
+        @Test
+        func `firstVacant scans for empty slot`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 4)
+            header.bitmap[0] = true
+            header.bitmap[1] = true
+            let vacant = header.firstVacant(max: header.bitmap.capacity.maximum)
+            #expect(vacant == 2)
+        }
+
+        @Test
+        func `firstVacant returns nil when full`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 4)
+            header.bitmap[0] = true
+            header.bitmap[1] = true
+            header.bitmap[2] = true
+            header.bitmap[3] = true
+            let vacant = header.firstVacant(max: header.bitmap.capacity.maximum)
+            #expect(vacant == nil)
+        }
     }
 }

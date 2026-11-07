@@ -6,48 +6,52 @@ import Memory_Small
 import Storage
 import Testing
 
-@Suite
-struct `Buffer.Slab — DS-029 Small-column probe` {
+enum `PROBE-DS-029 Small Column Tests` {}
 
-    typealias SmallColumn = Storage<Memory.Allocator<Memory.Small<64>>>.Contiguous<Int>
+extension `PROBE-DS-029 Small Column Tests` {
+    @Suite
+    struct `Buffer.Slab — DS-029 Small-column probe` {
 
-    @Test
-    func `construct, insert, remove, and occupancy-walk a Memory.Small<64> column`() {
+        typealias SmallColumn = Storage<Memory.Allocator<Memory.Small<64>>>.Contiguous<Int>
 
-        var buffer = Buffer<SmallColumn>.Slab(minimumCapacity: 8)
-        buffer.insert(10, at: 0)
-        buffer.insert(20, at: 2)
-        buffer.insert(30, at: 5)
+        @Test
+        func `construct, insert, remove, and occupancy-walk a Memory.Small<64> column`() {
 
-        #expect(buffer.occupancy == 3)
+            var buffer = Buffer<SmallColumn>.Slab(minimumCapacity: 8)
+            buffer.insert(10, at: 0)
+            buffer.insert(20, at: 2)
+            buffer.insert(30, at: 5)
 
-        var seen: [Index::Index<Bit::Bit>] = []
-        buffer.occupiedSlots.forEach { seen.append($0) }
-        #expect(seen.count == 3)
-        #expect(buffer.isOccupied(at: 0) == true)
-        #expect(buffer.isOccupied(at: 1) == false)
-        #expect(buffer.isOccupied(at: 2) == true)
-        #expect(buffer.isOccupied(at: 5) == true)
+            #expect(buffer.occupancy == 3)
 
-        #expect(buffer.remove(at: 2) == 20)
-        #expect(buffer.occupancy == 2)
-        #expect(buffer.isOccupied(at: 2) == false)
-    }
+            var seen: [Index::Index<Bit::Bit>] = []
+            buffer.occupiedSlots.forEach { seen.append($0) }
+            #expect(seen.count == 3)
+            #expect(buffer.isOccupied(at: 0) == true)
+            #expect(buffer.isOccupied(at: 1) == false)
+            #expect(buffer.isOccupied(at: 2) == true)
+            #expect(buffer.isOccupied(at: 5) == true)
 
-    @Test
-    func `clone a Memory.Small<64> column`() {
+            #expect(buffer.remove(at: 2) == 20)
+            #expect(buffer.occupancy == 2)
+            #expect(buffer.isOccupied(at: 2) == false)
+        }
 
-        var original = Buffer<SmallColumn>.Slab(minimumCapacity: 8)
-        original.insert(10, at: 0)
-        original.insert(20, at: 3)
+        @Test
+        func `clone a Memory.Small<64> column`() {
 
-        var copy = original.clone()
-        #expect(copy.occupancy == 2)
-        #expect(copy[Index::Index<Bit::Bit>(Ordinal(0 as UInt))] == 10)
-        #expect(copy[Index::Index<Bit::Bit>(Ordinal(3 as UInt))] == 20)
+            var original = Buffer<SmallColumn>.Slab(minimumCapacity: 8)
+            original.insert(10, at: 0)
+            original.insert(20, at: 3)
 
-        copy.insert(99, at: 6)
-        #expect(original.isOccupied(at: 6) == false)
-        #expect(original.occupancy == 2)
+            var copy = original.clone()
+            #expect(copy.occupancy == 2)
+            #expect(copy[Index::Index<Bit::Bit>(Ordinal(0 as UInt))] == 10)
+            #expect(copy[Index::Index<Bit::Bit>(Ordinal(3 as UInt))] == 20)
+
+            copy.insert(99, at: 6)
+            #expect(original.isOccupied(at: 6) == false)
+            #expect(original.occupancy == 2)
+        }
     }
 }

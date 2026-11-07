@@ -6,137 +6,141 @@ import Memory_Small
 import Storage
 import Testing
 
-@Suite
-struct `Buffer.Slab` {
+enum `Buffer.Slab Tests` {}
 
-    @Test
-    func `init creates empty growable slab`() {
-        let buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        #expect(buffer.isEmpty == true)
-        #expect(buffer.occupancy == .zero)
-        #expect(buffer.isFull == false)
-    }
+extension `Buffer.Slab Tests` {
+    @Suite
+    struct `Buffer.Slab` {
 
-    @Test
-    func `insert and remove at specific slots`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        let slot: Index::Index<Bit::Bit> = 3
-        buffer.insert(42, at: slot)
-        #expect(buffer.occupancy == 1)
+        @Test
+        func `init creates empty growable slab`() {
+            let buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            #expect(buffer.isEmpty == true)
+            #expect(buffer.occupancy == .zero)
+            #expect(buffer.isFull == false)
+        }
 
-        let value = buffer.remove(at: slot)
-        #expect(value == 42)
-        #expect(buffer.isEmpty == true)
-    }
+        @Test
+        func `insert and remove at specific slots`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            let slot: Index::Index<Bit::Bit> = 3
+            buffer.insert(42, at: slot)
+            #expect(buffer.occupancy == 1)
 
-    @Test
-    func `sparse occupancy — non-contiguous slots`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        buffer.insert(10, at: 0)
-        buffer.insert(20, at: 3)
-        buffer.insert(30, at: 7)
+            let value = buffer.remove(at: slot)
+            #expect(value == 42)
+            #expect(buffer.isEmpty == true)
+        }
 
-        #expect(buffer.occupancy == 3)
-    }
+        @Test
+        func `sparse occupancy — non-contiguous slots`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            buffer.insert(10, at: 0)
+            buffer.insert(20, at: 3)
+            buffer.insert(30, at: 7)
 
-    @Test
-    func `firstVacant returns correct slot`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 4
-        )
-        buffer.insert(10, at: 0)
-        buffer.insert(20, at: 1)
+            #expect(buffer.occupancy == 3)
+        }
 
-        let vacant = buffer.firstVacant()
-        #expect(vacant == 2)
-    }
+        @Test
+        func `firstVacant returns correct slot`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 4
+            )
+            buffer.insert(10, at: 0)
+            buffer.insert(20, at: 1)
 
-    @Test
-    func `slot reuse after removal`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 4
-        )
-        let slot: Index::Index<Bit::Bit> = 1
-        buffer.insert(10, at: slot)
-        _ = buffer.remove(at: slot)
-        buffer.insert(20, at: slot)
-        #expect(buffer.remove(at: slot) == 20)
-    }
+            let vacant = buffer.firstVacant()
+            #expect(vacant == 2)
+        }
 
-    @Test
-    func `multiple insert and remove`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        buffer.insert(10, at: 0)
-        buffer.insert(20, at: 1)
-        buffer.insert(30, at: 2)
-        #expect(buffer.occupancy == 3)
+        @Test
+        func `slot reuse after removal`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 4
+            )
+            let slot: Index::Index<Bit::Bit> = 1
+            buffer.insert(10, at: slot)
+            _ = buffer.remove(at: slot)
+            buffer.insert(20, at: slot)
+            #expect(buffer.remove(at: slot) == 20)
+        }
 
-        let v1 = buffer.remove(at: 1)
-        #expect(v1 == 20)
-        #expect(buffer.occupancy == 2)
+        @Test
+        func `multiple insert and remove`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            buffer.insert(10, at: 0)
+            buffer.insert(20, at: 1)
+            buffer.insert(30, at: 2)
+            #expect(buffer.occupancy == 3)
 
-        buffer.insert(40, at: 1)
-        #expect(buffer.occupancy == 3)
-        #expect(buffer.remove(at: 1) == 40)
-    }
+            let v1 = buffer.remove(at: 1)
+            #expect(v1 == 20)
+            #expect(buffer.occupancy == 2)
 
-    @Test
-    func `update replaces element`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        buffer.insert(10, at: 0)
+            buffer.insert(40, at: 1)
+            #expect(buffer.occupancy == 3)
+            #expect(buffer.remove(at: 1) == 40)
+        }
 
-        let old = buffer.update(at: 0, with: 99)
-        #expect(old == 10)
-        #expect(buffer.remove(at: 0) == 99)
-    }
+        @Test
+        func `update replaces element`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            buffer.insert(10, at: 0)
 
-    @Test
-    func `drain removes all elements`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        buffer.insert(10, at: 0)
-        buffer.insert(20, at: 3)
-        buffer.insert(30, at: 7)
+            let old = buffer.update(at: 0, with: 99)
+            #expect(old == 10)
+            #expect(buffer.remove(at: 0) == 99)
+        }
 
-        var drained: [Int] = []
-        buffer.drain { drained.append($0) }
-        #expect(buffer.isEmpty == true)
-        #expect(drained.sorted() == [10, 20, 30])
-    }
+        @Test
+        func `drain removes all elements`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            buffer.insert(10, at: 0)
+            buffer.insert(20, at: 3)
+            buffer.insert(30, at: 7)
 
-    @Test
-    func `removeAll clears buffer`() {
-        var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
-            minimumCapacity: 8
-        )
-        buffer.insert(10, at: 0)
-        buffer.insert(20, at: 1)
-        buffer.insert(30, at: 2)
-        buffer.removeAll()
+            var drained: [Int] = []
+            buffer.drain { drained.append($0) }
+            #expect(buffer.isEmpty == true)
+            #expect(drained.sorted() == [10, 20, 30])
+        }
 
-        #expect(buffer.isEmpty == true)
-        #expect(buffer.occupancy == .zero)
-    }
+        @Test
+        func `removeAll clears buffer`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab(
+                minimumCapacity: 8
+            )
+            buffer.insert(10, at: 0)
+            buffer.insert(20, at: 1)
+            buffer.insert(30, at: 2)
+            buffer.removeAll()
 
-    @Test
-    func `deinit cleans up occupied slots`() {
-        var buffer: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab? = Buffer<
-            Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>
-        >.Slab(minimumCapacity: 4)
-        buffer!.insert(10, at: 0)
-        buffer!.insert(20, at: 2)
-        buffer = nil
+            #expect(buffer.isEmpty == true)
+            #expect(buffer.occupancy == .zero)
+        }
 
+        @Test
+        func `deinit cleans up occupied slots`() {
+            var buffer: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab? = Buffer<
+                Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>
+            >.Slab(minimumCapacity: 4)
+            buffer!.insert(10, at: 0)
+            buffer!.insert(20, at: 2)
+            buffer = nil
+
+        }
     }
 }

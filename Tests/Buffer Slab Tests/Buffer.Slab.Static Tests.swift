@@ -7,120 +7,124 @@ import Memory_Small
 import Storage
 import Testing
 
-@Suite
-struct `Buffer.Slab Static Operations` {
+enum `Buffer.Slab.Static Tests` {}
 
-    @Test
-    func `insert and remove`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 8)
-        var storage = Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>.create(
-            minimumCapacity: 8
-        )
+extension `Buffer.Slab.Static Tests` {
+    @Suite
+    struct `Buffer.Slab Static Operations` {
 
-        let slot: Index::Index<Bit::Bit> = 3
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
-            42,
-            at: slot,
-            header: &header,
-            storage: &storage
-        )
+        @Test
+        func `insert and remove`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 8)
+            var storage = Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>.create(
+                minimumCapacity: 8
+            )
 
-        #expect(header.isOccupied(at: slot) == true)
-        #expect(header.occupancy == 1)
+            let slot: Index::Index<Bit::Bit> = 3
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
+                42,
+                at: slot,
+                header: &header,
+                storage: &storage
+            )
 
-        let value = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.remove(
-            at: slot,
-            header: &header,
-            storage: &storage
-        )
-        #expect(value == 42)
-        #expect(!header.isOccupied(at: slot) == true)
-        #expect(header.isEmpty == true)
-    }
+            #expect(header.isOccupied(at: slot) == true)
+            #expect(header.occupancy == 1)
 
-    @Test
-    func `forEachOccupied visits all occupied slots`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 8)
-        var storage = Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>.create(
-            minimumCapacity: 8
-        )
-
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
-            10,
-            at: 1,
-            header: &header,
-            storage: &storage
-        )
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
-            30,
-            at: 5,
-            header: &header,
-            storage: &storage
-        )
-
-        var visited: [UInt] = []
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.forEachOccupied(
-            header: header,
-            storage: storage
-        ) { storageIndex in
-            visited.append(storageIndex.underlying.rawValue)
+            let value = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.remove(
+                at: slot,
+                header: &header,
+                storage: &storage
+            )
+            #expect(value == 42)
+            #expect(!header.isOccupied(at: slot) == true)
+            #expect(header.isEmpty == true)
         }
 
-        #expect(visited.sorted() == [1, 5])
+        @Test
+        func `forEachOccupied visits all occupied slots`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 8)
+            var storage = Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>.create(
+                minimumCapacity: 8
+            )
 
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.deinitializeAll(
-            header: &header,
-            storage: &storage
-        )
-    }
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
+                10,
+                at: 1,
+                header: &header,
+                storage: &storage
+            )
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
+                30,
+                at: 5,
+                header: &header,
+                storage: &storage
+            )
 
-    @Test
-    func `firstVacant finds first empty slot`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 4)
-        header.bitmap[0] = true
-        header.bitmap[1] = true
+            var visited: [UInt] = []
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.forEachOccupied(
+                header: header,
+                storage: storage
+            ) { storageIndex in
+                visited.append(storageIndex.underlying.rawValue)
+            }
 
-        let vacant = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
-            .firstVacant(header: header)
-        #expect(vacant == 2)
-    }
+            #expect(visited.sorted() == [1, 5])
 
-    @Test
-    func `deinitializeAll clears all occupied slots`() {
-        var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
-            .init(capacity: 8)
-        var storage = Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>.create(
-            minimumCapacity: 8
-        )
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.deinitializeAll(
+                header: &header,
+                storage: &storage
+            )
+        }
 
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
-            10,
-            at: 0,
-            header: &header,
-            storage: &storage
-        )
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
-            20,
-            at: 3,
-            header: &header,
-            storage: &storage
-        )
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
-            30,
-            at: 7,
-            header: &header,
-            storage: &storage
-        )
+        @Test
+        func `firstVacant finds first empty slot`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 4)
+            header.bitmap[0] = true
+            header.bitmap[1] = true
 
-        Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.deinitializeAll(
-            header: &header,
-            storage: &storage
-        )
+            let vacant = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
+                .firstVacant(header: header)
+            #expect(vacant == 2)
+        }
 
-        #expect(header.isEmpty == true)
-        #expect(header.occupancy == 0)
+        @Test
+        func `deinitializeAll clears all occupied slots`() {
+            var header: Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Header =
+                .init(capacity: 8)
+            var storage = Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>.create(
+                minimumCapacity: 8
+            )
+
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
+                10,
+                at: 0,
+                header: &header,
+                storage: &storage
+            )
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
+                20,
+                at: 3,
+                header: &header,
+                storage: &storage
+            )
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.insert(
+                30,
+                at: 7,
+                header: &header,
+                storage: &storage
+            )
+
+            Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.deinitializeAll(
+                header: &header,
+                storage: &storage
+            )
+
+            #expect(header.isEmpty == true)
+            #expect(header.occupancy == 0)
+        }
     }
 }
