@@ -1,6 +1,6 @@
 import Buffer_Slab_Inline
 import Buffer_Slab_Test_Support
-public import Index
+import Index
 import Memory_Allocator
 import Memory_Small
 import Storage
