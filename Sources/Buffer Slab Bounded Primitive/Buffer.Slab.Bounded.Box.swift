@@ -4,7 +4,6 @@ import Index
 import Ordinal
 import Storage
 
-
 extension Buffer.Slab.Bounded where S: ~Copyable {
     @usableFromInline
     internal final class Box {

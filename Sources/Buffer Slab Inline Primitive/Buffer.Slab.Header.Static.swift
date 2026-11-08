@@ -1,8 +1,8 @@
 import Affine
 import Bit_Vector_Static
-import Ordinal
 public import Growth
 public import Index
+import Ordinal
 
 extension Buffer.Slab.Header where S: ~Copyable {
 

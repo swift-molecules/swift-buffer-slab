@@ -1,4 +1,3 @@
-
 extension Buffer.Slab.Small where S: ~Copyable {
     @frozen @usableFromInline
     internal enum _Representation: ~Copyable {
