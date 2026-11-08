@@ -13,8 +13,7 @@ extension `Buffer.Slab.Inline Release Safety Tests` {
     struct `Buffer.Slab.Inline - Release Safety` {
 
         @Test
-        func `insert at a sparse slot keeps its occupancy bit in every build`()
-        {
+        func `insert at a sparse slot keeps its occupancy bit in every build`() {
             var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
                 4
             >()
@@ -22,7 +21,7 @@ extension `Buffer.Slab.Inline Release Safety Tests` {
             buffer.insert(42, at: slot)
             #expect(buffer.occupancy == 1)
             #expect(buffer.isOccupied(at: slot) == true)
-        
+
         }
 
         @Test
@@ -33,7 +32,7 @@ extension `Buffer.Slab.Inline Release Safety Tests` {
             let slot: Index::Index<Bit::Bit> = 1
             buffer.insert(10, at: slot)
             #expect(buffer.remove(at: slot) == 10)
-        
+
         }
 
         @Test
@@ -43,7 +42,7 @@ extension `Buffer.Slab.Inline Release Safety Tests` {
             >()
             buffer.removeAll()
             #expect(buffer.isEmpty == true)
-        
+
         }
 
         @Test

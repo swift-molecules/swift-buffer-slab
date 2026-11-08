@@ -32,7 +32,7 @@ extension `Buffer.Slab.Small Bounds Safety Tests` {
                     "the out-of-range insert must land at its own slot on heap"
                 )
             }
-        
+
         }
 
         @Test
