@@ -21,7 +21,7 @@ extension `Buffer.Slab.Inline Canary Tests` {
             private var _storage: [Int] = []
         }
 
-        struct TrackedElement: ~Copyable {
+        fileprivate struct TrackedElement: ~Copyable {
             let id: Int
             let tracker: Tracker
             init(_ id: Int, tracker: Tracker) {
