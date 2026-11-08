@@ -9,12 +9,7 @@ import Testing
 enum `Buffer.Slab.Inline Canary Tests` {}
 
 extension `Buffer.Slab.Inline Canary Tests` {
-    @Suite(
-        .disabled(
-            if: !_isDebugAssertConfiguration(),
-            "release-blocked: swift-issue-inlinearray-class-field-write-elision; pending HANDOFF-sparse-occupancy-placement.md"
-        )
-    )
+    @Suite
     struct `Buffer.Slab.Inline - Deinit` {
 
         final class Tracker: @unchecked Sendable {
@@ -66,12 +61,7 @@ extension `Buffer.Slab.Inline Canary Tests`.`Buffer.Slab.Inline - Deinit`.Tracke
 }
 
 extension `Buffer.Slab.Inline Canary Tests` {
-    @Suite(
-        .disabled(
-            if: !_isDebugAssertConfiguration(),
-            "release-blocked: swift-issue-inlinearray-class-field-write-elision; pending HANDOFF-sparse-occupancy-placement.md"
-        )
-    )
+    @Suite
     struct `Buffer.Slab.Inline - Single-Free` {
 
         final class Ledger: @unchecked Sendable {

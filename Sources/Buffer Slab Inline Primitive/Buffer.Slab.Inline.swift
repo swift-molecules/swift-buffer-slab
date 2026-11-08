@@ -36,21 +36,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     func firstVacant(max: Tagged<Bit, Cardinal>) -> Index::Index<Bit::Bit>? { header.firstVacant(max: max) }
 
     @usableFromInline
-    static func _preconditionReleaseSound(function: StaticString = #function) {
-        guard _isDebugAssertConfiguration() else {
-            fatalError(
-                "Buffer.Slab.Inline/.Small mutation (\(function)) is release-mode-unsound "
-                    + "(swift-issue-inlinearray-class-field-write-elision): the box-owned occupancy "
-                    + "bitmap write is elided under -O, silently corrupting sparse occupancy. "
-                    + "Blocked pending the occupancy-placement decision — see the type doc-comment "
-                    + "on Buffer.Slab.Inline and .handoffs/HANDOFF-sparse-occupancy-placement.md."
-            )
-        }
-    }
-
-    @usableFromInline
     func insert(_ element: consuming S.Element, at slot: Index::Index<Bit::Bit>) {
-        Self._preconditionReleaseSound()
         storage.initialize(at: slot.retag(S.Element.self), to: consume element)
         storage.initialization = .empty
         header.bitmap[slot] = true
@@ -58,7 +44,6 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     func remove(at slot: Index::Index<Bit::Bit>) -> S.Element {
-        Self._preconditionReleaseSound()
         let element = storage.move(at: slot.retag(S.Element.self))
         storage.initialization = .empty
         header.bitmap[slot] = false
@@ -67,7 +52,6 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element {
-        Self._preconditionReleaseSound()
         let index = slot.retag(S.Element.self)
         let old = storage.move(at: index)
         storage.initialize(at: index, to: consume element)
@@ -77,7 +61,6 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     func removeAll() {
-        Self._preconditionReleaseSound()
         var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
@@ -92,7 +75,6 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     func drain(_ body: (consuming S.Element) -> Void) {
-        Self._preconditionReleaseSound()
         var slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(0))
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {

@@ -9,12 +9,7 @@ import Testing
 enum `Buffer.Slab.Inline Tests` {}
 
 extension `Buffer.Slab.Inline Tests` {
-    @Suite(
-        .disabled(
-            if: !_isDebugAssertConfiguration(),
-            "release-blocked: swift-issue-inlinearray-class-field-write-elision; .Inline release-broken pending HANDOFF-sparse-occupancy-placement.md"
-        )
-    )
+    @Suite
     struct `Buffer.Slab.Inline` {
 
         @Test

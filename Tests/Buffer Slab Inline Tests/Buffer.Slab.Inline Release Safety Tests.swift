@@ -13,65 +13,41 @@ extension `Buffer.Slab.Inline Release Safety Tests` {
     struct `Buffer.Slab.Inline - Release Safety` {
 
         @Test
-        func `insert on the documented triggering shape traps under release and succeeds under debug`()
-            async
+        func `insert at a sparse slot keeps its occupancy bit in every build`()
         {
-            if _isDebugAssertConfiguration() {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
-                    4
-                >()
-                let slot: Index::Index<Bit::Bit> = 2
-                buffer.insert(42, at: slot)
-                #expect(buffer.occupancy == 1)
-                #expect(buffer.isOccupied(at: slot) == true)
-            } else {
-                await #expect(processExitsWith: .failure) {
-                    var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
-                        .Inline<4>()
-                    let slot: Index::Index<Bit::Bit> = 2
-                    buffer.insert(42, at: slot)
-                }
-            }
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
+                4
+            >()
+            let slot: Index::Index<Bit::Bit> = 2
+            buffer.insert(42, at: slot)
+            #expect(buffer.occupancy == 1)
+            #expect(buffer.isOccupied(at: slot) == true)
+        
         }
 
         @Test
-        func `remove traps under release and succeeds under debug`() async {
-            if _isDebugAssertConfiguration() {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
-                    4
-                >()
-                let slot: Index::Index<Bit::Bit> = 1
-                buffer.insert(10, at: slot)
-                #expect(buffer.remove(at: slot) == 10)
-            } else {
-                await #expect(processExitsWith: .failure) {
-                    var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
-                        .Inline<4>()
-                    let slot: Index::Index<Bit::Bit> = 1
-                    _ = buffer.remove(at: slot)
-                }
-            }
+        func `remove at a sparse slot returns the element in every build`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
+                4
+            >()
+            let slot: Index::Index<Bit::Bit> = 1
+            buffer.insert(10, at: slot)
+            #expect(buffer.remove(at: slot) == 10)
+        
         }
 
         @Test
-        func `removeAll traps in every non-debug build, including -Ounchecked`() async {
-            if _isDebugAssertConfiguration() {
-                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
-                    4
-                >()
-                buffer.removeAll()
-                #expect(buffer.isEmpty == true)
-            } else {
-                await #expect(processExitsWith: .failure) {
-                    var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
-                        .Inline<4>()
-                    buffer.removeAll()
-                }
-            }
+        func `removeAll empties the buffer in every build`() {
+            var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<
+                4
+            >()
+            buffer.removeAll()
+            #expect(buffer.isEmpty == true)
+        
         }
 
         @Test
-        func `empty-buffer construction and read-only queries remain usable under release`() {
+        func `empty-buffer construction and read-only queries`() {
 
             let buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Inline<4>()
             #expect(buffer.isEmpty == true)

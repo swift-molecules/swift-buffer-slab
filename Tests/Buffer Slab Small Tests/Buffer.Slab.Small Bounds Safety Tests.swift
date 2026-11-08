@@ -16,31 +16,23 @@ extension `Buffer.Slab.Small Bounds Safety Tests` {
             `insert at slot equal to inlineCapacity with vacancies forces a spill instead of an out-of-bounds write`()
             async
         {
-            if _isDebugAssertConfiguration() {
-                await #expect(processExitsWith: .success) {
-                    var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
-                        .Small<4>()
-                    buffer.insert(10, at: 0)
-                    buffer.insert(99, at: 4)
-                    precondition(buffer.isSpilled, "slot >= inlineCapacity must force a heap spill")
-                    precondition(buffer.occupancy == 2, "both elements must survive the spill")
-                    precondition(
-                        buffer.peek(at: 0) == 10,
-                        "the pre-spill element must survive the move"
-                    )
-                    precondition(
-                        buffer.peek(at: 4) == 99,
-                        "the out-of-range insert must land at its own slot on heap"
-                    )
-                }
-            } else {
-
-                await #expect(processExitsWith: .failure) {
-                    var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
-                        .Small<4>()
-                    buffer.insert(10, at: 0)
-                }
+            await #expect(processExitsWith: .success) {
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab
+                    .Small<4>()
+                buffer.insert(10, at: 0)
+                buffer.insert(99, at: 4)
+                precondition(buffer.isSpilled, "slot >= inlineCapacity must force a heap spill")
+                precondition(buffer.occupancy == 2, "both elements must survive the spill")
+                precondition(
+                    buffer.peek(at: 0) == 10,
+                    "the pre-spill element must survive the move"
+                )
+                precondition(
+                    buffer.peek(at: 4) == 99,
+                    "the out-of-range insert must land at its own slot on heap"
+                )
             }
+        
         }
 
         @Test

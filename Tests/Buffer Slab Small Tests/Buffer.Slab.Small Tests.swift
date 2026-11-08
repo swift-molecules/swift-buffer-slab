@@ -8,12 +8,7 @@ import Testing
 enum `Buffer.Slab.Small Tests` {}
 
 extension `Buffer.Slab.Small Tests` {
-    @Suite(
-        .disabled(
-            if: !_isDebugAssertConfiguration(),
-            "release-blocked: swift-issue-inlinearray-class-field-write-elision (inline arm); pending HANDOFF-sparse-occupancy-placement.md"
-        )
-    )
+    @Suite
     struct `Buffer.Slab.Small` {
 
         @Test
