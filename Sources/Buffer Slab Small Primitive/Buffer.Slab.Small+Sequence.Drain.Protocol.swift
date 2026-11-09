@@ -157,8 +157,8 @@ extension Buffer.Slab.Small where S: ~Copyable {
     ) -> Buffer.Slab
     where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
         var old = heap
-        let oldCapacity = Int(old.capacity.underlying.rawValue)
-        let requiredForSlot = Int(slot.underlying.rawValue + 1)
+        let oldCapacity = Int(bitPattern: old.capacity)
+        let requiredForSlot = Int(bitPattern: slot) + 1
         let newCapacity = Tagged<E, Cardinal>(
             _unchecked: Cardinal(UInt(Swift.max(requiredForSlot, oldCapacity * 2)))
         )
