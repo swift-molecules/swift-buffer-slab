@@ -6,6 +6,12 @@ public import Storage
 
 extension Buffer.Slab where S: ~Copyable {
 
+    /// A slab of `wordCount` slots stored inline in a class box.
+    ///
+    /// Occupancy has one owner: the bitmap in the box's header. The store's
+    /// initialization ledger is kept empty between operations and names a slot
+    /// only while an element is moved out of it, so teardown, `removeAll()`,
+    /// `drain` and every mutation consult the bitmap alone.
     public struct Inline<let wordCount: Int>: ~Copyable {
 
         @usableFromInline
