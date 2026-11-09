@@ -18,6 +18,7 @@ extension Buffer.Slab where S: ~Copyable {
     @inlinable
     public subscript(slot: Index::Index<Bit::Bit>) -> S.Element {
         _read {
+            precondition(header.bitmap[slot], "read at a vacant slot")
             yield storage[slot.retag(S.Element.self)]
         }
     }

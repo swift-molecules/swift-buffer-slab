@@ -12,6 +12,7 @@ extension Buffer.Slab.Bounded where S: ~Copyable, S.Element: Copyable {
 
     @inlinable
     public func peek(at slot: Index::Index<Bit::Bit>) -> S.Element {
+        precondition(header.bitmap[slot], "peek at a vacant slot")
         let storageIndex = slot.retag(S.Element.self)
         return storage[storageIndex]
     }

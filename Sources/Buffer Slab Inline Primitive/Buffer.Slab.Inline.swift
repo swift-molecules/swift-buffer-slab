@@ -41,6 +41,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     /// operations; it names only this slot for the duration of the move.
     @usableFromInline
     func vacate(_ slot: Index::Index<Bit::Bit>) -> S.Element {
+        precondition(header.bitmap[slot], "move from a vacant slot")
         let index = slot.retag(S.Element.self)
         storage.initialization = Store.Initialization<S.Element>.empty.inserting(index)
         return storage.move(at: index)
@@ -48,6 +49,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     func insert(_ element: consuming S.Element, at slot: Index::Index<Bit::Bit>) {
+        precondition(!header.bitmap[slot], "insert at an occupied slot")
         storage.initialize(at: slot.retag(S.Element.self), to: consume element)
         storage.initialization = .empty
         header.bitmap[slot] = true
@@ -98,7 +100,10 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
 extension Buffer.Slab.Inline.Box where S: ~Copyable, S.Element: Copyable {
     @usableFromInline
-    func peek(at slot: Index::Index<Bit::Bit>) -> S.Element { storage[slot.retag(S.Element.self)] }
+    func peek(at slot: Index::Index<Bit::Bit>) -> S.Element {
+        precondition(header.bitmap[slot], "peek at a vacant slot")
+        return storage[slot.retag(S.Element.self)]
+    }
 
     @usableFromInline
     func occupiedElements(max wordCount: Int) -> [S.Element] {

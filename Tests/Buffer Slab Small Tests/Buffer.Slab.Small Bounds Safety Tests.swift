@@ -81,5 +81,44 @@ extension `Buffer.Slab.Small Bounds Safety Tests` {
                 _ = buffer.update(at: 4, with: 1)
             }
         }
+        @Test
+        func `heap-mode insert past the heap capacity grows instead of writing out of bounds`() async {
+            await #expect(processExitsWith: .success) {
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
+                    4
+                >()
+                buffer.insert(1, at: 0)
+                buffer.insert(2, at: 8)
+                precondition(buffer.isSpilled, "must spill")
+                buffer.insert(3, at: 1000)
+                precondition(buffer.isSpilled, "must stay on the heap")
+                precondition(buffer.occupancy == 3, "every element must survive the growth")
+                precondition(buffer.peek(at: 0) == 1, "slot 0 must keep its element")
+                precondition(buffer.peek(at: 8) == 2, "slot 8 must keep its element")
+                precondition(buffer.peek(at: 1000) == 3, "the far insert must land at its own slot")
+            }
+        }
+
+        @Test
+        func `heap-mode insert at an occupied slot traps`() async {
+            await #expect(processExitsWith: .failure) {
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
+                    4
+                >()
+                buffer.insert(1, at: 8)
+                buffer.insert(2, at: 8)
+            }
+        }
+
+        @Test
+        func `heap-mode remove at a vacant slot traps`() async {
+            await #expect(processExitsWith: .failure) {
+                var buffer = Buffer<Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<Int>>.Slab.Small<
+                    4
+                >()
+                buffer.insert(1, at: 8)
+                _ = buffer.remove(at: 7)
+            }
+        }
     }
 }

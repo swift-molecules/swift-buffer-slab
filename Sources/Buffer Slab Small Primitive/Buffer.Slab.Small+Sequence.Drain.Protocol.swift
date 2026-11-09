@@ -80,6 +80,9 @@ extension Buffer.Slab.Small where S: ~Copyable {
     where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
         switch _storage {
         case .heap(var buf):
+            if !(slot < buf.capacity.map(Ordinal.init)) {
+                buf = Self._grow(consume buf, coveringAtLeast: slot)
+            }
             buf.insert(consume element, at: slot)
             self = Self(_storage: .heap(consume buf))
 
@@ -143,6 +146,27 @@ extension Buffer.Slab.Small where S: ~Copyable {
             buf.removeAll()
             self = Self(_storage: .inline(consume buf))
         }
+    }
+
+    /// Moves every element of `heap` into a larger heap slab whose capacity
+    /// covers `slot`, keeping each element at its slot.
+    @usableFromInline
+    static func _grow<E>(
+        _ heap: consuming Buffer.Slab,
+        coveringAtLeast slot: Index::Index<Bit::Bit>
+    ) -> Buffer.Slab
+    where S == Storage<Memory.Allocator<Memory.Small<0>>>.Contiguous<E> {
+        var old = heap
+        let oldCapacity = Int(old.capacity.underlying.rawValue)
+        let requiredForSlot = Int(slot.underlying.rawValue + 1)
+        let newCapacity = Tagged<E, Cardinal>(
+            _unchecked: Cardinal(UInt(Swift.max(requiredForSlot, oldCapacity * 2)))
+        )
+        var grown = Buffer.Slab(minimumCapacity: newCapacity)
+        old.occupiedSlots.forEach { occupied in
+            grown.insert(old.remove(at: occupied), at: occupied)
+        }
+        return grown
     }
 
     @usableFromInline

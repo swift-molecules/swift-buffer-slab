@@ -14,6 +14,7 @@ extension Buffer.Slab where S: ~Copyable {
         header: inout Header,
         storage: inout S
     ) {
+        precondition(!header.bitmap[slot], "insert at an occupied slot")
         storage.initialize(at: slot.retag(S.Element.self), to: consume element)
         header.bitmap[slot] = true
     }
@@ -24,6 +25,7 @@ extension Buffer.Slab where S: ~Copyable {
         header: inout Header,
         storage: inout S
     ) -> S.Element {
+        precondition(header.bitmap[slot], "remove at a vacant slot")
         let element = storage.move(at: slot.retag(S.Element.self))
         header.bitmap[slot] = false
         return element
@@ -33,8 +35,10 @@ extension Buffer.Slab where S: ~Copyable {
     public static func update(
         at slot: Index::Index<Bit::Bit>,
         with element: consuming S.Element,
+        header: borrowing Header,
         storage: inout S
     ) -> S.Element {
+        precondition(header.bitmap[slot], "update at a vacant slot")
         let storageIndex = slot.retag(S.Element.self)
         let old = storage.move(at: storageIndex)
         storage.initialize(at: storageIndex, to: consume element)

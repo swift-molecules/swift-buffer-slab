@@ -5,6 +5,7 @@ Use this package when you need a fixed set of numbered slots that elements occup
 ## Laws
 
 - Slots are stable. Inserting, removing or updating one slot never moves an element in another slot. A removed slot can be reused.
+- `insert` traps on an occupied slot. `remove`, `update`, the subscript and `peek` trap on a vacant slot. No operation overwrites an element or reads a slot that holds none.
 - `firstVacant()` returns the lowest-numbered vacant slot, or `nil` when every slot is occupied.
 - `Buffer<S>.Slab` and `Buffer<S>.Slab.Bounded` never grow. Their capacity is the capacity of the storage allocated at creation, which is at least the requested minimum.
 - The array initializers put element `i` at slot `i`. They throw instead of truncating when the array has more elements than the capacity.
@@ -14,5 +15,5 @@ Use this package when you need a fixed set of numbered slots that elements occup
 - `Buffer<S>.Slab.Inline<wordCount>` iterates over a snapshot of the occupied elements, in ascending slot order, taken when the iterator is made.
 - `Buffer<S>.Slab.Inline<wordCount>` and the inline mode of `Buffer<S>.Slab.Small<inlineCapacity>` work only in debug builds. In a `-O` build, every mutation (`insert`, `remove`, `update`, `removeAll`, `drain`, and the array initializer) traps on purpose. The guard is a `fatalError`, so it traps under `-Ounchecked` too. The reason is a compiler bug that drops the occupancy-bitmap write under optimization. Construction and read-only queries still work.
 - `Buffer<S>.Slab.Small<inlineCapacity>` starts inline. An insert moves it to the heap when the inline slots are full or when the slot number is `inlineCapacity` or more. The heap capacity is at least the larger of the slot number plus one and twice `inlineCapacity`. Every element keeps its slot through the move.
-- After the move, `Buffer<S>.Slab.Small<inlineCapacity>` stays on the heap and does not grow again. Removing elements does not bring it back inline. Only `removeAll()` and `drain` return it to empty inline storage.
+- After the move, `Buffer<S>.Slab.Small<inlineCapacity>` stays on the heap. An insert at a slot past the heap capacity grows the heap to at least the larger of the slot number plus one and twice the old capacity, and every element keeps its slot. Removing elements does not bring it back inline. Only `removeAll()` and `drain` return it to empty inline storage.
 - In inline mode, `Buffer<S>.Slab.Small<inlineCapacity>` returns `false` from `isOccupied(at:)` for a slot of `inlineCapacity` or more. `remove` and `update` trap on such a slot.
