@@ -27,7 +27,7 @@ extension Buffer.Slab.Inline where S: ~Copyable {
             let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
             while slot < end {
                 if header.bitmap[slot] {
-                    _ = storage.move(at: slot.retag(S.Element.self))
+                    _ = vacate(slot)
                 }
                 slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
             }

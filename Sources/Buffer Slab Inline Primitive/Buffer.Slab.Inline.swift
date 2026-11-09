@@ -35,6 +35,17 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
     @usableFromInline
     func firstVacant(max: Tagged<Bit, Cardinal>) -> Index::Index<Bit::Bit>? { header.firstVacant(max: max) }
 
+    /// Moves the element out of an occupied slot.
+    ///
+    /// The bitmap owns occupancy, so the store's ledger is kept empty between
+    /// operations; it names only this slot for the duration of the move.
+    @usableFromInline
+    func vacate(_ slot: Index::Index<Bit::Bit>) -> S.Element {
+        let index = slot.retag(S.Element.self)
+        storage.initialization = Store.Initialization<S.Element>.empty.inserting(index)
+        return storage.move(at: index)
+    }
+
     @usableFromInline
     func insert(_ element: consuming S.Element, at slot: Index::Index<Bit::Bit>) {
         storage.initialize(at: slot.retag(S.Element.self), to: consume element)
@@ -44,17 +55,15 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
 
     @usableFromInline
     func remove(at slot: Index::Index<Bit::Bit>) -> S.Element {
-        let element = storage.move(at: slot.retag(S.Element.self))
-        storage.initialization = .empty
+        let element = vacate(slot)
         header.bitmap[slot] = false
         return element
     }
 
     @usableFromInline
     func update(at slot: Index::Index<Bit::Bit>, with element: consuming S.Element) -> S.Element {
-        let index = slot.retag(S.Element.self)
-        let old = storage.move(at: index)
-        storage.initialize(at: index, to: consume element)
+        let old = vacate(slot)
+        storage.initialize(at: slot.retag(S.Element.self), to: consume element)
         storage.initialization = .empty
         return old
     }
@@ -65,8 +74,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
-                _ = storage.move(at: slot.retag(S.Element.self))
-                storage.initialization = .empty
+                _ = vacate(slot)
                 header.bitmap[slot] = false
             }
             slot = Index::Index<Bit::Bit>(_unchecked: Ordinal(slot.underlying.rawValue + 1))
@@ -79,8 +87,7 @@ extension Buffer.Slab.Inline.Box where S: ~Copyable {
         let end = Tagged<Bit, Cardinal>(_unchecked: Cardinal(UInt(wordCount))).map(Ordinal.init)
         while slot < end {
             if header.bitmap[slot] {
-                let element = storage.move(at: slot.retag(S.Element.self))
-                storage.initialization = .empty
+                let element = vacate(slot)
                 header.bitmap[slot] = false
                 body(consume element)
             }
